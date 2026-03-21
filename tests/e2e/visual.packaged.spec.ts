@@ -2,7 +2,8 @@ import { expect, test, type Page } from '@playwright/test'
 import { launchPackagedApp } from './helpers/packagedApp'
 
 const screenshotOptions = {
-  scale: 'css' as const
+  scale: 'css' as const,
+  maxDiffPixelRatio: 0.025
 }
 
 async function closeSetupWizardIfVisible(page: Page) {
@@ -41,10 +42,7 @@ test.describe('packaged visual baselines', () => {
     try {
       await expect(app.page.getByTestId('setup-sheet')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('setup-wizard-open-1400x920.png', {
-        ...screenshotOptions,
-        maxDiffPixels: 500
-      })
+      await expect(app.page).toHaveScreenshot('setup-wizard-open-1400x920.png', screenshotOptions)
       await app.page.getByTestId('setup-close-button').click()
       await expect(app.page.getByTestId('queue-empty-state')).toBeVisible()
       await expectNoPrimaryScroll(app.page)

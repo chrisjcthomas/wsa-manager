@@ -72,6 +72,20 @@ Do not validate UI work against the installed `Program Files` copy during develo
 - Run packaged smoke checks instead of relying on stale local installs.
 - Review screenshot baseline changes intentionally in PRs.
 
+## Codex Review
+
+Codex review in GitHub is set up in two layers:
+
+1. In Codex settings, turn on `Code review` for `chrisjcthomas/wsa-manager`.
+2. In a pull request comment, write `@codex review`.
+
+Optional:
+
+- Turn on `Automatic reviews` in Codex settings if you want every PR reviewed without a comment.
+- Add one-off focus in the comment when needed, for example `@codex review for packaging regressions` or `@codex review for security regressions`.
+
+This repository uses [AGENTS.md](AGENTS.md) to tell Codex what to prioritize during review.
+
 ## Releases
 
 Tagged builds publish GitHub releases automatically.
@@ -95,3 +109,4 @@ Each release publishes:
 - Open a PR for every non-trivial change.
 - Run `npm run validate` before every PR.
 - For UI and packaging work, also run `npm run smoke:packaged` and `npm run test:visual`.
+- Request `@codex review` on PRs unless automatic reviews are enabled in Codex settings.

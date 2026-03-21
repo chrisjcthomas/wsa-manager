@@ -15,6 +15,11 @@
   - [ ] `release/win-unpacked/WSA Manager.exe`
   - [ ] `release/WSA.Manager.Setup.<version>.exe`
 
+## Codex review
+
+- [ ] `@codex review` requested on this PR, or Automatic reviews are enabled
+- [ ] Extra review focus was added when needed
+
 ## UI evidence
 
 - Visual reference used:

@@ -39,7 +39,9 @@ Run `npm run validate` before every PR. For UI or packaging changes, also run `n
 - Flag any change that reintroduces vertical scrolling in the default dashboard empty state.
 - Flag any change that lets compiled source sidecars or temp screenshots leak into the repository.
 - Flag any packaging change that creates multiple competing installer locations or nested versioned release directories.
+- Treat broken install instructions, stale release asset names, and misleading public release documentation as P1 issues.
 - For UI reviews, compare against the checked-in visual baselines and approved mockup assets, not memory.
+- Codex reviews in GitHub flag only P0 and P1 issues by default, so encode any repo-specific review priority rules here in those terms.
 
 ## Skills and subagents
 
@@ -60,5 +62,5 @@ Run `npm run validate` before every PR. For UI or packaging changes, also run `n
   - commands run
   - artifact tested
   - screenshots when UI baselines changed
-- Use `@codex review` on PRs and keep this file updated so review behavior improves over time.
+- Use `@codex review` on PRs unless automatic reviews are enabled, and keep this file updated so review behavior improves over time.
 - This repository is public and `main` is protected. Keep changes on short-lived `codex/<task>` branches and merge through PRs with the required Windows checks.

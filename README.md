@@ -81,7 +81,7 @@ Codex review in GitHub is set up in two layers:
 
 Optional:
 
-- Turn on `Automatic reviews` in Codex settings if you want every PR reviewed without a comment.
+- Turn on `automatic reviews` in Codex settings if you want every PR reviewed without a comment.
 - Add one-off focus in the comment when needed, for example `@codex review for packaging regressions` or `@codex review for security regressions`.
 
 This repository uses [AGENTS.md](AGENTS.md) to tell Codex what to prioritize during review.

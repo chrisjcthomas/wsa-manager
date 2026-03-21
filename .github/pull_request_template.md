@@ -17,7 +17,7 @@
 
 ## Codex review
 
-- [ ] `@codex review` requested on this PR, or Automatic reviews are enabled
+- [ ] `@codex review` requested on this PR, or automatic reviews are enabled
 - [ ] Extra review focus was added when needed
 
 ## UI evidence

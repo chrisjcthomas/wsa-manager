@@ -13,7 +13,7 @@
 - Artifact tested:
   - [ ] `npm run dev`
   - [ ] `release/win-unpacked/WSA Manager.exe`
-  - [ ] `release/WSA Manager Setup <version>.exe`
+  - [ ] `release/WSA.Manager.Setup.<version>.exe`
 
 ## UI evidence
 
@@ -28,4 +28,3 @@
 
 - Risks:
 - Follow-ups:
-

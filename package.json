@@ -54,6 +54,7 @@
   "build": {
     "appId": "com.codex.wsamanager",
     "productName": "WSA Manager",
+    "artifactName": "WSA.Manager.Setup.${version}.${ext}",
     "directories": {
       "output": "release"
     },

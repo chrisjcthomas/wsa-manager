@@ -22,7 +22,7 @@ if (nestedVersionDirs.length > 0) {
 }
 
 const installers = fs.existsSync(releaseDir)
-  ? fs.readdirSync(releaseDir).filter((entry) => /^WSA Manager Setup .+\.exe$/i.test(entry))
+  ? fs.readdirSync(releaseDir).filter((entry) => /^WSA\.Manager\.Setup\..+\.exe$/i.test(entry))
   : []
 
 if (mode === 'full' && installers.length !== 1) {
@@ -36,4 +36,3 @@ if (mode === 'unpacked' && installers.length > 1) {
 if (errors.length > 0) {
   throw new Error(errors.join('\n'))
 }
-

@@ -1,15 +1,53 @@
 # WSA Manager
 
-Windows utility for managing Android apps in Windows Subsystem for Android.
+Windows utility for installing, removing, and cleaning up Android apps in Windows Subsystem for Android.
 
-## Quick start
+![WSA Manager screenshot](docs/screen.png)
+
+## Install
+
+### End users
+
+1. Open the [Releases](https://github.com/chrisjcthomas/wsa-manager/releases) page.
+2. Download the latest `WSA Manager Setup <version>.exe`.
+3. Run the installer.
+4. Launch `WSA Manager` from the Start menu.
+
+This is currently an unsigned beta app. Windows SmartScreen may show a warning the first time you run the installer. If that happens, choose `More info` and then `Run anyway`.
+
+### Portable test build
+
+Each GitHub release also includes a portable package named `WSA Manager portable <version>.zip`.
+
+Use that build when you want to smoke-test the app without installing it into `AppData\Local\Programs`.
+
+## Requirements
+
+- Windows 11
+- Windows Subsystem for Android installed
+- `adb.exe` available either from Android platform-tools or a manually selected path
+
+## First run
+
+On first launch, WSA Manager opens the setup wizard automatically when readiness is incomplete.
+
+Typical first-run flow:
+
+1. Confirm WSA is installed.
+2. Point the app at `adb.exe` if auto-detection does not find it.
+3. Wake WSA if the subsystem is sleeping.
+4. Run the setup check until the app reports ready.
+
+Cleanup and diagnostics stay available even when setup is incomplete.
+
+## Development
 
 ```bash
 npm ci
 npm run dev
 ```
 
-## Core commands
+### Core commands
 
 ```bash
 npm run validate
@@ -19,15 +57,40 @@ npm run test:visual
 npm run release:build
 ```
 
-## Development targets
+### Canonical app targets
 
 - Local dev: `npm run dev`
 - Packaged smoke target: `release/win-unpacked/WSA Manager.exe`
 - Installer acceptance target: `release/WSA Manager Setup <version>.exe`
 
+Do not validate UI work against the installed `Program Files` copy during development, and never hot-swap `app.asar`.
+
 ## UI workflow
 
-- Reference `docs/code.html` and `docs/screen.png` before changing the shell or dashboard layout.
-- Use the packaged harness tests for regressions instead of manually inspecting stale installs.
-- Update visual baselines intentionally and review them in the PR.
+- Use `docs/code.html` and `docs/screen.png` as the approved visual reference.
+- Run packaged smoke checks instead of relying on stale local installs.
+- Review screenshot baseline changes intentionally in PRs.
 
+## Releases
+
+Tagged builds publish GitHub releases automatically.
+
+Release tags use the format:
+
+```text
+v0.1.0
+```
+
+Each release publishes:
+
+- `WSA Manager Setup <version>.exe`
+- `WSA Manager Setup <version>.exe.blockmap`
+- `WSA Manager portable <version>.zip`
+- `build-manifest.json`
+
+## Repository workflow
+
+- Work from short-lived branches named `codex/<task>`.
+- Open a PR for every non-trivial change.
+- Run `npm run validate` before every PR.
+- For UI and packaging work, also run `npm run smoke:packaged` and `npm run test:visual`.

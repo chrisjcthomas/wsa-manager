@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WSA App Manager - Professional Utility</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<!-- BEGIN: Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Poppins', 'sans-serif'],
+          },
+          colors: {
+            teal: {
+              500: '#06b6d4',
+              600: '#059669',
+              700: '#047857',
+            },
+            warning: '#f59e0b',
+          },
+        },
+      },
+    }
+  </script>
+<!-- END: Tailwind Configuration -->
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="mica-and-noise">body {
+    background-color: #020617;
+    /* Base slate-950 */
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDW_m2EpxZGphOi9_-220awX6iasYlBr9UH0wChTFkE3aBl-41lj39hu-zGDAWAl5XlXGTHxPLqSo7MBypNJ0JHkxEIIFPIz6V8NEAV3W5F994vzIogPJnJUFyvjpHdVicZuJRhOtQtHZ73W2cTneEIU1T9R_KrF0UGfuGFDdSo8gYzWZPlzpg14izDqlTv2Z30HvEUHGN9NQEGl-9WGvfpHj68b_OWTwkxYYg4x2VLkxcPEYl3eIrcoUnh-RKXls1TUiDw7THqmdXb);
+    /* Subtle noise/texture */
+    background-attachment: fixed;
+    color: #f8fafc
+    }
+.mica-effect {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08)
+    }
+.card-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25)
+    }
+.sidebar-active-gradient {
+    background: linear-gradient(90deg, rgba(5, 150, 105, 0.15) 0%, rgba(5, 150, 105, 0) 100%);
+    border-left: 3px solid #059669
+    }</style>
+<style data-purpose="animations-and-asymmetry">
+    .hover-lift {
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
+    }
+    
+    .hover-lift:hover {
+      transform: translateY(-4px) scale(1.015);
+      box-shadow: 0 10px 30px -5px rgba(5, 150, 105, 0.3);
+    }
+
+    /* Asymmetric layout adjustments */
+    .stagger-low { transform: translateY(8px); }
+    .stagger-high { transform: translateY(-12px); }
+    .stagger-right { margin-left: 12px; }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="font-sans min-h-screen flex overflow-hidden">
+<!-- BEGIN: Sidebar -->
+<aside class="w-[260px] h-screen mica-effect flex flex-col p-4 z-20 border-r border-slate-800 bg-slate-950">
+<!-- Logo -->
+<div class="flex items-center gap-3 px-2 mb-10 mt-2">
+<div class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center font-display font-bold text-lg">W</div>
+<h1 class="font-display font-bold text-xl tracking-tight">WSA Manager</h1>
+</div>
+<!-- Navigation -->
+<nav class="flex-grow space-y-1">
+<a class="sidebar-active-gradient flex items-center gap-3 px-3 py-2 text-white font-medium rounded-r-md" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Dashboard
+      </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Installed Apps
+      </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Cleanup
+      </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-400 hover:text-white transition-colors" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+        Diagnostics
+      </a>
+</nav>
+<!-- Bottom Status -->
+<div class="mt-auto pt-6 border-t border-slate-800 text-xs uppercase tracking-widest font-semibold space-y-3 px-2">
+<div class="flex items-center justify-between">
+<span class="text-slate-500">WSA Status:</span>
+<span class="text-warning">Sleeping</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-500">ADB Status:</span>
+<span class="text-teal-500">Connected</span>
+</div>
+</div>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: Main Content Area -->
+<main class="flex-grow flex flex-col h-screen overflow-y-auto p-6 md:p-8 lg:p-12 relative">
+<!-- Background Decor -->
+<!-- Header -->
+<header class="mb-10">
+<h2 class="font-display font-bold text-4xl text-white tracking-tight -ml-1">Dashboard</h2>
+<p class="text-slate-400 mt-1 font-medium"><span class="font-display font-semibold text-xl drop-shadow-[0_0_8px_rgba(255,255,255,0.15)] text-[rgba(255,255,255,0.85)]">Manage your Android apps on Windows 11</span></p>
+</header>
+<!-- Warning Banner -->
+<section class="mb-8" data-purpose="status-alerts">
+<div class="bg-warning/10 border border-warning/20 p-4 rounded-xl flex items-center justify-between card-shadow" style="background-color: rgba(15, 20, 30, 0.8);">
+<div class="flex items-center gap-4">
+<div class="bg-warning text-slate-950 p-2 rounded-lg">
+<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" fill-rule="evenodd"></path></svg>
+</div>
+<div>
+<h4 class="font-bold text-white">WSA is currently sleeping</h4>
+<p class="text-sm text-slate-300">The first app launch may take longer than usual while the subsystem wakes up.</p>
+</div>
+</div>
+<button class="bg-white/10 hover:bg-white/20 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all">Wake Now</button>
+</div>
+</section>
+<!-- Dropzone Area -->
+<section class="mb-12 flex flex-col items-center justify-center py-20 px-6 border-[3px] border-dashed border-white/60 bg-white/10 backdrop-blur-md rounded-[2.5rem] text-center group transition-all duration-500 hover:bg-white/20 hover:border-white shadow-inner cursor-pointer" data-purpose="file-upload" style="background-color: rgba(255, 255, 255, 0.05); border-style: dashed; border-dasharray: 12 12;">
+<div class="mb-8 relative">
+<div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center border border-white/30 group-hover:scale-110 transition-transform duration-500">
+<svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div class="absolute -top-1 -right-1 w-8 h-8 bg-white text-teal-600 rounded-full flex items-center justify-center border-4 border-teal-800">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path></svg>
+</div>
+</div>
+<h3 class="font-display text-4xl font-bold mb-4 text-white drop-shadow-lg">Add more APK files</h3>
+<p class="font-display text-white text-lg max-w-md font-medium leading-relaxed drop-shadow-md">Drag &amp; drop your Android packages here to begin the seamless Windows integration.</p>
+</section>
+<!-- Queue Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start" data-purpose="installation-queue">
+<!-- Instagram Card (Installing) -->
+<div class="mica-effect p-6 rounded-2xl card-shadow hover-lift stagger-low" style="background-color: rgba(15, 20, 30, 0.6);">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-slate-800 w-12 h-12 rounded-xl flex items-center justify-center">
+<svg class="w-8 h-8 text-pink-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+</div>
+<span class="text-teal-500 text-xs font-bold uppercase tracking-wider bg-teal-500/10 px-2 py-1 rounded">Installing</span>
+</div>
+<h3 class="text-white font-bold text-lg">Instagram.apk</h3>
+<p class="text-slate-400 text-sm mb-6">Version: 268.0.0.18</p>
+<div class="space-y-2">
+<div class="flex justify-between text-xs text-slate-400">
+<span>Copying OBB files...</span>
+<span>68%</span>
+</div>
+<div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+<div class="bg-teal-600 h-full w-[68%] rounded-full shadow-[0_0_10px_rgba(5,150,105,0.5)]"></div>
+</div>
+</div>
+</div>
+<!-- Discord Card (Success) -->
+<div class="mica-effect p-6 rounded-3xl card-shadow hover-lift min-h-[240px] flex flex-col stagger-right border-teal-500/30" style="background-color: rgba(15, 20, 30, 0.6);">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center">
+<svg class="w-8 h-8 text-white" fill="currentColor" viewbox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.048-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"></path></svg>
+</div>
+<span class="text-teal-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+<svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" fill-rule="evenodd"></path></svg>
+            Installed
+          </span>
+</div>
+<h3 class="text-white font-bold text-lg">Discord.apk</h3>
+<p class="text-slate-400 text-sm mb-auto">Package: com.discord</p>
+<button class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-teal-900/40 mt-6">
+          Open App
+        </button>
+</div>
+<!-- Spotify Card (Queued) -->
+<div class="mica-effect p-6 rounded-2xl border border-slate-700/50 hover-lift stagger-high" style="background-color: rgba(15, 20, 30, 0.6);">
+<div class="flex justify-between items-start mb-4">
+<div class="bg-green-600/20 w-12 h-12 rounded-xl flex items-center justify-center">
+<svg class="w-8 h-8 text-green-500" fill="currentColor" viewbox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.503 17.306c-.216.354-.675.465-1.028.249-2.859-1.747-6.458-2.143-10.7-1.171-.403.092-.81-.161-.902-.564-.092-.403.161-.81.564-.902 4.636-1.06 8.608-.61 11.817 1.349.354.217.465.676.249 1.029zm1.467-3.264c-.273.444-.853.585-1.297.312-3.273-2.012-8.261-2.593-12.13-1.418-.497.151-1.022-.128-1.173-.625-.151-.498.128-1.022.625-1.173 4.417-1.341 9.914-.69 13.664 1.611.444.273.584.853.311 1.296h-.001zm.126-3.395C15.011 8.23 8.327 8.007 4.439 9.188c-.612.185-1.261-.161-1.446-.773-.185-.612.161-1.261.773-1.446 4.462-1.354 11.838-1.096 16.529 1.688.55.326.732 1.036.406 1.586s-1.036.732-1.586.406l-.001-.001z"></path></svg>
+</div>
+<span class="text-slate-500 text-xs font-bold uppercase tracking-wider bg-slate-800 px-2 py-1 rounded">Queued</span>
+</div>
+<h3 class="text-white font-bold text-lg">Spotify.apk</h3>
+<p class="text-slate-400 text-sm">Size: 42.1 MB</p>
+<div class="mt-8 flex gap-2">
+<div class="w-1.5 h-1.5 bg-slate-600 rounded-full animate-pulse"></div>
+<div class="w-1.5 h-1.5 bg-slate-600 rounded-full animate-pulse delay-75"></div>
+<div class="w-1.5 h-1.5 bg-slate-600 rounded-full animate-pulse delay-150"></div>
+</div>
+</div>
+</section>
+<!-- Footer Stats (Floating style) -->
+<footer class="mt-auto pt-12 pb-4 text-slate-500 text-sm flex justify-between items-center opacity-70">
+<div class="flex gap-6">
+<span>Disk Space: 14.2 GB free</span>
+<span>Build: 2311.40000.5.0</span>
+</div>
+<div>
+        © 2024 WSA App Manager Pro
+      </div>
+</footer>
+</main>
+<!-- END: Main Content Area -->
+<!-- BEGIN: Floating Action (Visual Polish) -->
+<div class="fixed bottom-8 right-8 z-30">
+<button class="bg-teal-600 hover:bg-teal-500 text-white p-4 rounded-2xl shadow-2xl transition-transform active:scale-95 group">
+<svg class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<!-- END: Floating Action -->
+</body></html>

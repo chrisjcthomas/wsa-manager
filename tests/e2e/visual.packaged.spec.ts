@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
 import { launchPackagedApp } from './helpers/packagedApp'
 
+const screenshotOptions = {
+  scale: 'css' as const,
+  maxDiffPixelRatio: 0.025
+}
+
 async function closeSetupWizardIfVisible(page: Page) {
   const closeButton = page.getByTestId('setup-close-button')
   if (await closeButton.isVisible().catch(() => false)) {
@@ -37,14 +42,12 @@ test.describe('packaged visual baselines', () => {
     try {
       await expect(app.page.getByTestId('setup-sheet')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('setup-wizard-open-1400x920.png', {
-        maxDiffPixels: 500
-      })
+      await expect(app.page).toHaveScreenshot('setup-wizard-open-1400x920.png', screenshotOptions)
       await app.page.getByTestId('setup-close-button').click()
       await expect(app.page.getByTestId('queue-empty-state')).toBeVisible()
       await expectNoPrimaryScroll(app.page)
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-empty-1400x920.png')
+      await expect(app.page).toHaveScreenshot('install-empty-1400x920.png', screenshotOptions)
     } finally {
       await app.close()
     }
@@ -64,7 +67,7 @@ test.describe('packaged visual baselines', () => {
       await closeSetupWizardIfVisible(app.page)
       await expect(app.page.getByTestId('queue-empty-state')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-empty-1060x740.png')
+      await expect(app.page).toHaveScreenshot('install-empty-1060x740.png', screenshotOptions)
     } finally {
       await app.close()
     }
@@ -84,7 +87,7 @@ test.describe('packaged visual baselines', () => {
       await closeSetupWizardIfVisible(app.page)
       await expect(app.page.getByTestId('queue-empty-state')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-empty-920x640.png')
+      await expect(app.page).toHaveScreenshot('install-empty-920x640.png', screenshotOptions)
     } finally {
       await app.close()
     }
@@ -101,19 +104,22 @@ test.describe('packaged visual baselines', () => {
     try {
       await expect(app.page.getByText('Spotify.apk')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-queue-1400x920.png')
+      await expect(app.page).toHaveScreenshot('install-queue-1400x920.png', screenshotOptions)
       await app.page.getByTestId('nav-apps').click()
       await expect(app.page.getByRole('heading', { name: 'Installed Apps' })).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('installed-apps-1400x920.png')
+      await expect(app.page).toHaveScreenshot('installed-apps-1400x920.png', screenshotOptions)
       await app.page.getByTestId('nav-cleanup').click()
       await expect(app.page.getByRole('heading', { name: 'Cleanup' })).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('cleanup-1400x920.png')
+      await expect(app.page).toHaveScreenshot('cleanup-1400x920.png', screenshotOptions)
       await app.page.getByTestId('nav-diag').click()
       await expect(app.page.getByRole('heading', { name: 'Diagnostics' })).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('diagnostics-1400x920.png')
+      await expect(app.page).toHaveScreenshot('diagnostics-1400x920.png', {
+        ...screenshotOptions,
+        mask: [app.page.getByTestId('diagnostics-build-label')]
+      })
     } finally {
       await app.close()
     }

@@ -14,7 +14,7 @@
     "test:ui": "vitest run tests/renderer",
     "validate": "npm run check:repo && npm run typecheck && npm run test:main && npm run test:ui",
     "build": "npm run check:repo && npm run typecheck && electron-vite build && node scripts/write-build-info.mjs",
-    "package:unpacked": "npm run release:clean && npm run build && electron-builder --dir --x64 && node scripts/write-release-manifest.mjs unpacked && node scripts/check-release-layout.mjs unpacked",
+    "package:unpacked": "npm run release:clean && npm run build && electron-builder --publish never --dir --x64 && node scripts/write-release-manifest.mjs unpacked && node scripts/check-release-layout.mjs unpacked",
     "smoke:packaged:ci": "playwright test tests/e2e/smoke.packaged.spec.ts",
     "smoke:packaged": "npm run package:unpacked && npm run smoke:packaged:ci",
     "test:visual:ci": "playwright test tests/e2e/visual.packaged.spec.ts",
@@ -24,7 +24,7 @@
     "release:clean": "node scripts/clean-release.mjs",
     "release:build": "npm run release:clean && npm run dist",
     "dist:dir": "npm run package:unpacked",
-    "dist": "npm run build && electron-builder --win --x64 && node scripts/write-release-manifest.mjs full && node scripts/check-release-layout.mjs full"
+    "dist": "npm run build && electron-builder --publish never --win --x64 && node scripts/write-release-manifest.mjs full && node scripts/check-release-layout.mjs full"
   },
   "dependencies": {
     "lucide-react": "^0.577.0",

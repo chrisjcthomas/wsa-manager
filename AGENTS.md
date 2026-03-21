@@ -61,4 +61,4 @@ Run `npm run validate` before every PR. For UI or packaging changes, also run `n
   - artifact tested
   - screenshots when UI baselines changed
 - Use `@codex review` on PRs and keep this file updated so review behavior improves over time.
-- On this current private personal repo, GitHub branch protection is unavailable without GitHub Pro. Keep `main` socially protected via PRs plus CI until the account tier changes or the repo visibility changes.
+- This repository is public and `main` is protected. Keep changes on short-lived `codex/<task>` branches and merge through PRs with the required Windows checks.

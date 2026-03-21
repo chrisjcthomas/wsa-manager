@@ -97,6 +97,10 @@ export async function launchPackagedApp(options: LaunchPackagedAppOptions): Prom
   const browser = await chromium.connectOverCDP(`http://127.0.0.1:${options.port}`)
   const page = await waitForPage(browser)
   await page.waitForLoadState('domcontentloaded')
+  await page.setViewportSize({
+    width: options.width,
+    height: options.height
+  })
   await page.addStyleTag({
     content: `
       *, *::before, *::after {

@@ -32,28 +32,28 @@ jobs:
       - name: Pack portable smoke build
         shell: pwsh
         run: |
-          $portableZip = Join-Path $PWD "release/WSA Manager portable $env:RELEASE_TAG.zip"
+          $portableZip = Join-Path $PWD "release/WSA.Manager.portable.$env:RELEASE_TAG.zip"
           Compress-Archive -Path "release/win-unpacked/*" -DestinationPath $portableZip -Force
       - uses: actions/upload-artifact@v4
         with:
           name: wsa-manager-release
           path: |
-            release/WSA Manager Setup *.exe
-            release/WSA Manager Setup *.exe.blockmap
-            release/WSA Manager portable *.zip
+            release/WSA.Manager.Setup.*.exe
+            release/WSA.Manager.Setup.*.exe.blockmap
+            release/WSA.Manager.portable.*.zip
             release/build-manifest.json
       - name: Publish GitHub release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $installer = Get-ChildItem release -Filter "WSA Manager Setup *.exe" | Where-Object { $_.Name -notlike "*.blockmap" } | Select-Object -First 1
+          $installer = Get-ChildItem release -Filter "WSA.Manager.Setup.*.exe" | Where-Object { $_.Name -notlike "*.blockmap" } | Select-Object -First 1
           if (-not $installer) {
             throw "Installer not found in release/."
           }
 
           $blockmap = Get-Item "$($installer.FullName).blockmap"
-          $portableZip = Get-ChildItem release -Filter "WSA Manager portable *.zip" | Select-Object -First 1
+          $portableZip = Get-ChildItem release -Filter "WSA.Manager.portable.*.zip" | Select-Object -First 1
           $manifest = Join-Path $PWD "release/build-manifest.json"
           $assets = @($installer.FullName, $blockmap.FullName, $portableZip.FullName, $manifest)
 

@@ -25,7 +25,7 @@ const manifest = {
 const installerCandidates = fs.existsSync(releaseDir)
   ? fs
       .readdirSync(releaseDir)
-      .filter((entry) => /^WSA Manager Setup .+\.exe$/i.test(entry))
+      .filter((entry) => /^WSA\.Manager\.Setup\..+\.exe$/i.test(entry))
       .sort()
   : []
 
@@ -35,4 +35,3 @@ if (installerCandidates.length > 0) {
 
 fs.mkdirSync(releaseDir, { recursive: true })
 fs.writeFileSync(path.join(releaseDir, 'build-manifest.json'), JSON.stringify(manifest, null, 2), 'utf8')
-

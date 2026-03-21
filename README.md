@@ -9,7 +9,7 @@ Windows utility for installing, removing, and cleaning up Android apps in Window
 ### End users
 
 1. Open the [Releases](https://github.com/chrisjcthomas/wsa-manager/releases) page.
-2. Download the latest `WSA Manager Setup <version>.exe`.
+2. Download the latest `WSA.Manager.Setup.<version>.exe`.
 3. Run the installer.
 4. Launch `WSA Manager` from the Start menu.
 
@@ -17,7 +17,8 @@ This is currently an unsigned beta app. Windows SmartScreen may show a warning t
 
 ### Portable test build
 
-Each GitHub release also includes a portable package named `WSA Manager portable <version>.zip`.
+Each GitHub release also includes a portable package named `WSA.Manager.portable.<tag>.zip`.
+For example: `WSA.Manager.portable.v0.1.0.zip`.
 
 Use that build when you want to smoke-test the app without installing it into `AppData\Local\Programs`.
 
@@ -61,7 +62,7 @@ npm run release:build
 
 - Local dev: `npm run dev`
 - Packaged smoke target: `release/win-unpacked/WSA Manager.exe`
-- Installer acceptance target: `release/WSA Manager Setup <version>.exe`
+- Installer acceptance target: `release/WSA.Manager.Setup.<version>.exe`
 
 Do not validate UI work against the installed `Program Files` copy during development, and never hot-swap `app.asar`.
 
@@ -83,9 +84,9 @@ v0.1.0
 
 Each release publishes:
 
-- `WSA Manager Setup <version>.exe`
-- `WSA Manager Setup <version>.exe.blockmap`
-- `WSA Manager portable <version>.zip`
+- `WSA.Manager.Setup.<version>.exe`
+- `WSA.Manager.Setup.<version>.exe.blockmap`
+- `WSA.Manager.portable.<tag>.zip`
 - `build-manifest.json`
 
 ## Repository workflow

@@ -6,7 +6,7 @@
 - The only valid app targets are:
   - local dev: `npm run dev`
   - packaged smoke target: `release/win-unpacked/WSA Manager.exe`
-  - installer acceptance target: `release/WSA Manager Setup <version>.exe`
+  - installer acceptance target: `release/WSA.Manager.Setup.<version>.exe`
 - Never hot-swap `app.asar`.
 - `src/` and `tests/` are authoring trees. Generated `.js` and generated `.d.ts` sidecars do not belong there.
 - When a bug repeats twice, add or update a repo rule, skill, or harness check instead of relying on session memory.

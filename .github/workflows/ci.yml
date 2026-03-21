@@ -29,8 +29,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run package:unpacked
-      - run: npm run smoke:packaged:ci
+      - run: npm run smoke:packaged
 
   visual-baselines:
     runs-on: windows-latest
@@ -42,6 +41,4 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run package:unpacked
-      - run: npm run test:visual:ci
-
+      - run: npm run test:visual

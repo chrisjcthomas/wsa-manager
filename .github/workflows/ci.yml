@@ -30,6 +30,7 @@ jobs:
               '^tests/',
               '^scripts/',
               '^package\.json$',
+              '^package-lock\.json$',
               '^electron\.vite\.config\.',
               '^playwright\.config\.',
               '^tsconfig',

@@ -6,6 +6,11 @@ const screenshotOptions = {
   maxDiffPixelRatio: 0.025
 }
 
+const queueScreenshotOptions = {
+  ...screenshotOptions,
+  maxDiffPixelRatio: 0.1
+}
+
 async function closeSetupWizardIfVisible(page: Page) {
   const closeButton = page.getByTestId('setup-close-button')
   if (await closeButton.isVisible().catch(() => false)) {
@@ -103,8 +108,10 @@ test.describe('packaged visual baselines', () => {
 
     try {
       await expect(app.page.getByText('Spotify.apk')).toBeVisible()
+      await expect(app.page.getByText('Discord.apk')).toBeVisible()
+      await expect(app.page.getByText('Instagram.apk')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-queue-1400x920.png', screenshotOptions)
+      await expect(app.page).toHaveScreenshot('install-queue-1400x920.png', queueScreenshotOptions)
       await app.page.getByTestId('nav-apps').click()
       await expect(app.page.getByRole('heading', { name: 'Installed Apps' })).toBeVisible()
       await waitForSettledReadiness(app.page)

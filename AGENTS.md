@@ -3,11 +3,18 @@
 ## Operating rules
 
 - Treat this repository as the source of truth. Do not validate UI changes against the installed `Program Files` copy during development.
+- Active workflow docs are:
+  - `AGENTS.md`
+  - `README.md`
+  - `docs/README.md`
+  - `.github/pull_request_template.md`
 - The only valid app targets are:
   - local dev: `npm run dev`
   - packaged smoke target: `release/win-unpacked/WSA Manager.exe`
   - installer acceptance target: `release/WSA.Manager.Setup.<version>.exe`
+- Historical planning and troubleshooting notes live under `docs/archive/` and are not the live workflow source of truth.
 - Never hot-swap `app.asar`.
+- `npm run smoke:packaged`, `npm run test:visual`, `npm run package:unpacked`, and `npm run release:build` all clean or rewrite `release/`. Never run them in parallel.
 - `src/` and `tests/` are authoring trees. Generated `.js` and generated `.d.ts` sidecars do not belong there.
 - When a bug repeats twice, add or update a repo rule, skill, or harness check instead of relying on session memory.
 
@@ -41,6 +48,9 @@ Run `npm run validate` before every PR. For UI or packaging changes, also run `n
 - Flag any packaging change that creates multiple competing installer locations or nested versioned release directories.
 - Treat broken install instructions, stale release asset names, and misleading public release documentation as P1 issues.
 - For UI reviews, compare against the checked-in visual baselines and approved mockup assets, not memory.
+- Treat visual baseline failures as determinism problems first. Check timestamps, relative-time labels, build labels, diagnostics logs, endpoint text, and other time-sensitive UI before refreshing snapshots.
+- Prefer targeted masks and narrow tolerances for dynamic UI regions over blind snapshot refreshes.
+- Before merging, verify the PR is actually mergeable: green required checks, resolved review threads, and no branch-policy blockers.
 - Codex reviews in GitHub flag only P0 and P1 issues by default, so encode any repo-specific review priority rules here in those terms.
 
 ## Skills and subagents
@@ -49,6 +59,9 @@ Run `npm run validate` before every PR. For UI or packaging changes, also run `n
   - `ui-smoke`
   - `release-check`
   - `wsa-readiness-debug`
+  - `visual-baseline-debug`
+  - `codex-pr-review-ops`
+- These project skills are repo-local and should be updated whenever a failure pattern repeats.
 - Use subagents only for bounded parallel tasks such as layout tracing, state-path tracing, or read-only codebase exploration.
 - Keep delegated asks narrow and concrete.
 

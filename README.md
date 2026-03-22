@@ -58,6 +58,8 @@ npm run test:visual
 npm run release:build
 ```
 
+Packaged commands are not safe to run in parallel. `npm run smoke:packaged`, `npm run test:visual`, `npm run package:unpacked`, and `npm run release:build` all clean or rewrite `release/`.
+
 ### Canonical app targets
 
 - Local dev: `npm run dev`
@@ -71,6 +73,17 @@ Do not validate UI work against the installed `Program Files` copy during develo
 - Use `docs/code.html` and `docs/screen.png` as the approved visual reference.
 - Run packaged smoke checks instead of relying on stale local installs.
 - Review screenshot baseline changes intentionally in PRs.
+- Treat screenshot failures as determinism issues first. Check time-sensitive labels, build metadata, diagnostics timestamps, and other dynamic text before refreshing a baseline.
+- Prefer targeted masks and narrow tolerances for dynamic regions over broad snapshot churn.
+
+## Project docs
+
+- Active workflow docs:
+  - `AGENTS.md`
+  - `README.md`
+  - `docs/README.md`
+  - `.github/pull_request_template.md`
+- Historical planning and troubleshooting notes now live under `docs/archive/`.
 
 ## Codex Review
 
@@ -110,3 +123,5 @@ Each release publishes:
 - Run `npm run validate` before every PR.
 - For UI and packaging work, also run `npm run smoke:packaged` and `npm run test:visual`.
 - Request `@codex review` on PRs unless automatic reviews are enabled in Codex settings.
+- Resolve review threads and check branch-policy blockers before assuming a green PR is mergeable.
+- Project-specific workflow skills live under `.codex/skills/` and version with this repository.

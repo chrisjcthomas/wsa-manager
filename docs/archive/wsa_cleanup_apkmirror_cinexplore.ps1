@@ -1,3 +1,7 @@
+# Archived helper note:
+# This script is a historical one-off cleanup helper from before the repo workflow was formalized.
+# Keep it for reference only, not as a current source-of-truth or supported cleanup path.
+
 # Cleanup Script for APKMirror Installer & Cinexplore (Updated with Start Menu)
 
 $wsaLocalState = "C:\Users\cobek\AppData\Local\Packages\MicrosoftCorporationII.WindowsSubsystemForAndroid_8wekyb3d8bbwe\LocalState"

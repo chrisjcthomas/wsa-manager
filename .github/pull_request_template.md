@@ -19,6 +19,7 @@
 
 - [ ] `@codex review` requested on this PR, or automatic reviews are enabled
 - [ ] Extra review focus was added when needed
+- [ ] Review threads are resolved before merge
 
 ## UI evidence
 

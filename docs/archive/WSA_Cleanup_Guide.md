@@ -1,3 +1,5 @@
+> Archived note: This manual cleanup guide is historical reference only. Use the repo workflow docs and current app behavior as the live source of truth.
+
 # Troubleshooting WSA App Uninstallation Issues
 
 When an Android app is uninstalled from Windows Subsystem for Android (WSA), it may still show up in the Windows "All apps" list or Start Menu. 

@@ -1,3 +1,5 @@
+> Archived note: This roadmap is historical pre-repo-planning context. Use `AGENTS.md`, `README.md`, and `docs/README.md` for the current workflow and source of truth.
+
 # WSA Electron App Roadmap
 
 ## Goal

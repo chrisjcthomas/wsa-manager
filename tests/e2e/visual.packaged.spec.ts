@@ -11,6 +11,13 @@ const queueScreenshotOptions = {
   maxDiffPixelRatio: 0.1
 }
 
+function installedAppsScreenshotOptions(page: Page) {
+  return {
+    ...screenshotOptions,
+    mask: [page.getByText(/^Seen /)]
+  }
+}
+
 async function closeSetupWizardIfVisible(page: Page) {
   const closeButton = page.getByTestId('setup-close-button')
   if (await closeButton.isVisible().catch(() => false)) {
@@ -114,8 +121,10 @@ test.describe('packaged visual baselines', () => {
       await expect(app.page).toHaveScreenshot('install-queue-1400x920.png', queueScreenshotOptions)
       await app.page.getByTestId('nav-apps').click()
       await expect(app.page.getByRole('heading', { name: 'Installed Apps' })).toBeVisible()
+      await expect(app.page.getByText('Discord', { exact: true })).toBeVisible()
+      await expect(app.page.getByText('Spotify', { exact: true })).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('installed-apps-1400x920.png', screenshotOptions)
+      await expect(app.page).toHaveScreenshot('installed-apps-1400x920.png', installedAppsScreenshotOptions(app.page))
       await app.page.getByTestId('nav-cleanup').click()
       await expect(app.page.getByRole('heading', { name: 'Cleanup' })).toBeVisible()
       await waitForSettledReadiness(app.page)

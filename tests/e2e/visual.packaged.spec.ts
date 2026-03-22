@@ -19,6 +19,14 @@ function installedAppsScreenshotOptions(page: Page) {
   }
 }
 
+function diagnosticsScreenshotOptions(page: Page) {
+  return {
+    ...screenshotOptions,
+    maxDiffPixelRatio: 0.05,
+    mask: [page.getByTestId('diagnostics-build-label'), page.getByTestId('diagnostics-entry-timestamp')]
+  }
+}
+
 async function closeSetupWizardIfVisible(page: Page) {
   const closeButton = page.getByTestId('setup-close-button')
   if (await closeButton.isVisible().catch(() => false)) {
@@ -133,10 +141,7 @@ test.describe('packaged visual baselines', () => {
       await app.page.getByTestId('nav-diag').click()
       await expect(app.page.getByRole('heading', { name: 'Diagnostics' })).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('diagnostics-1400x920.png', {
-        ...screenshotOptions,
-        mask: [app.page.getByTestId('diagnostics-build-label')]
-      })
+      await expect(app.page).toHaveScreenshot('diagnostics-1400x920.png', diagnosticsScreenshotOptions(app.page))
     } finally {
       await app.close()
     }

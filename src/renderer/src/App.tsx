@@ -922,7 +922,10 @@ function DiagnosticsView({
         ) : (
           diagnostics.map((entry) => (
             <div key={entry.id} className={`rounded-[1.2rem] border border-white/[0.04] bg-white/[0.02] p-3 ${isCompact ? 'space-y-2' : 'flex gap-3'}`}>
-              <span className={`${isCompact ? 'block' : 'w-24 flex-shrink-0'} text-[11px] font-mono text-zinc-600`}>
+              <span
+                data-testid="diagnostics-entry-timestamp"
+                className={`${isCompact ? 'block' : 'w-24 flex-shrink-0'} text-[11px] font-mono text-zinc-600`}
+              >
                 {new Date(entry.timestamp).toLocaleTimeString()}
               </span>
               <div className="min-w-0 flex-1">

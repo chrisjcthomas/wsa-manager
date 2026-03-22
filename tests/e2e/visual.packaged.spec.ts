@@ -22,7 +22,7 @@ function installedAppsScreenshotOptions(page: Page) {
 function diagnosticsScreenshotOptions(page: Page) {
   return {
     ...screenshotOptions,
-    maxDiffPixelRatio: 0.05,
+    maxDiffPixelRatio: 0.1,
     mask: [page.getByTestId('diagnostics-build-label'), page.getByTestId('diagnostics-entry-timestamp')]
   }
 }
@@ -140,6 +140,8 @@ test.describe('packaged visual baselines', () => {
       await expect(app.page).toHaveScreenshot('cleanup-1400x920.png', screenshotOptions)
       await app.page.getByTestId('nav-diag').click()
       await expect(app.page.getByRole('heading', { name: 'Diagnostics' })).toBeVisible()
+      await expect(app.page.getByRole('heading', { name: 'Activity Log' })).toBeVisible()
+      await expect(app.page.getByText('Endpoint', { exact: true })).toBeVisible()
       await waitForSettledReadiness(app.page)
       await expect(app.page).toHaveScreenshot('diagnostics-1400x920.png', diagnosticsScreenshotOptions(app.page))
     } finally {

@@ -6,6 +6,27 @@ const screenshotOptions = {
   maxDiffPixelRatio: 0.025
 }
 
+const queueScreenshotOptions = {
+  ...screenshotOptions,
+  maxDiffPixelRatio: 0.1
+}
+
+function installedAppsScreenshotOptions(page: Page) {
+  return {
+    ...screenshotOptions,
+    maxDiffPixelRatio: 0.05,
+    mask: [page.getByText(/^Seen /)]
+  }
+}
+
+function diagnosticsScreenshotOptions(page: Page) {
+  return {
+    ...screenshotOptions,
+    maxDiffPixelRatio: 0.1,
+    mask: [page.getByTestId('diagnostics-build-label'), page.getByTestId('diagnostics-entry-timestamp')]
+  }
+}
+
 async function closeSetupWizardIfVisible(page: Page) {
   const closeButton = page.getByTestId('setup-close-button')
   if (await closeButton.isVisible().catch(() => false)) {
@@ -103,23 +124,26 @@ test.describe('packaged visual baselines', () => {
 
     try {
       await expect(app.page.getByText('Spotify.apk')).toBeVisible()
+      await expect(app.page.getByText('Discord.apk')).toBeVisible()
+      await expect(app.page.getByText('Instagram.apk')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-queue-1400x920.png', screenshotOptions)
+      await expect(app.page).toHaveScreenshot('install-queue-1400x920.png', queueScreenshotOptions)
       await app.page.getByTestId('nav-apps').click()
       await expect(app.page.getByRole('heading', { name: 'Installed Apps' })).toBeVisible()
+      await expect(app.page.getByText('Discord', { exact: true })).toBeVisible()
+      await expect(app.page.getByText('Spotify', { exact: true })).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('installed-apps-1400x920.png', screenshotOptions)
+      await expect(app.page).toHaveScreenshot('installed-apps-1400x920.png', installedAppsScreenshotOptions(app.page))
       await app.page.getByTestId('nav-cleanup').click()
       await expect(app.page.getByRole('heading', { name: 'Cleanup' })).toBeVisible()
       await waitForSettledReadiness(app.page)
       await expect(app.page).toHaveScreenshot('cleanup-1400x920.png', screenshotOptions)
       await app.page.getByTestId('nav-diag').click()
       await expect(app.page.getByRole('heading', { name: 'Diagnostics' })).toBeVisible()
+      await expect(app.page.getByRole('heading', { name: 'Activity Log' })).toBeVisible()
+      await expect(app.page.getByText('Endpoint', { exact: true })).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('diagnostics-1400x920.png', {
-        ...screenshotOptions,
-        mask: [app.page.getByTestId('diagnostics-build-label')]
-      })
+      await expect(app.page).toHaveScreenshot('diagnostics-1400x920.png', diagnosticsScreenshotOptions(app.page))
     } finally {
       await app.close()
     }

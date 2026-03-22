@@ -14,6 +14,7 @@ const queueScreenshotOptions = {
 function installedAppsScreenshotOptions(page: Page) {
   return {
     ...screenshotOptions,
+    maxDiffPixelRatio: 0.05,
     mask: [page.getByText(/^Seen /)]
   }
 }

@@ -14,7 +14,7 @@ import { DiagnosticsService } from '@main/services/diagnostics/DiagnosticsServic
 import { runPowerShell } from '@main/services/process'
 import { SettingsStore } from '@main/storage/SettingsStore'
 import { AdbService } from '@main/services/adb/AdbService'
-import { buildSearchTokens, isPathWithinRoot, normalizeForSearch } from './helpers'
+import { buildSearchTokens, isMatchingCleanupFinding, isPathWithinRoot, normalizeForSearch } from './helpers'
 
 interface RegistryEntry {
   KeyPath: string
@@ -28,6 +28,8 @@ interface RegistryClassEntry {
 }
 
 export class CleanupService {
+  private latestScanFindings = new Map<string, CleanupFinding>()
+
   constructor(
     private readonly adbService: AdbService,
     private readonly settingsStore: SettingsStore,
@@ -42,6 +44,7 @@ export class CleanupService {
       installedPackages = await this.adbService.listUserPackages()
     } catch {
       warnings.push('ADB is unavailable, so ghost cleanup cannot compare Windows entries to Android packages.')
+      this.rememberScannedFindings([])
       return CleanupScanResultSchema.parse({
         scannedAt: new Date().toISOString(),
         warnings,
@@ -141,6 +144,7 @@ export class CleanupService {
       })
     }
 
+    this.rememberScannedFindings(findings)
     this.diagnostics.log('info', 'cleanup', `Cleanup scan found ${findings.length} artifact(s)`)
     return CleanupScanResultSchema.parse({
       scannedAt: new Date().toISOString(),
@@ -156,8 +160,9 @@ export class CleanupService {
 
     for (const finding of validated) {
       try {
-        await this.removeArtifact(finding)
-        removed.push(finding)
+        const authorizedFinding = this.resolveAuthorizedFinding(finding)
+        await this.removeArtifact(authorizedFinding)
+        removed.push(authorizedFinding)
       } catch (error) {
         failed.push({
           findingId: finding.id,
@@ -279,6 +284,19 @@ export class CleanupService {
     }
 
     fs.rmSync(finding.target, { force: true })
+  }
+
+  private rememberScannedFindings(findings: CleanupFinding[]): void {
+    this.latestScanFindings = new Map(findings.map((finding) => [finding.id, finding]))
+  }
+
+  private resolveAuthorizedFinding(requestedFinding: CleanupFinding): CleanupFinding {
+    const scannedFinding = this.latestScanFindings.get(requestedFinding.id)
+    if (!scannedFinding || !isMatchingCleanupFinding(requestedFinding, scannedFinding)) {
+      throw new Error('Cleanup item no longer matches the latest scan results. Run a new scan and try again.')
+    }
+
+    return scannedFinding
   }
 
   private getStartMenuRoot(): string {

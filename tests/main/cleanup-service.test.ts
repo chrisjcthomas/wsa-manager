@@ -123,11 +123,11 @@ function createService(settingsStore: { recordCleanup: ReturnType<typeof vi.fn> 
   return new CleanupService(
     {
       listUserPackages: vi.fn()
-    } as any,
-    settingsStore as any,
+    } as unknown as import('@main/services/adb/AdbService').AdbService,
+    settingsStore as unknown as import('@main/storage/SettingsStore').SettingsStore,
     {
       log: vi.fn()
-    } as any
+    } as unknown as import('@main/services/diagnostics/DiagnosticsService').DiagnosticsService
   )
 }
 

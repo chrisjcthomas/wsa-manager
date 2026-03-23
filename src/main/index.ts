@@ -76,8 +76,10 @@ async function createWindow(): Promise<void> {
     }
   })
 
-  if (process.env.ELECTRON_RENDERER_URL) {
-    await mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL)
+  const rendererUrl = !app.isPackaged ? process.env.ELECTRON_RENDERER_URL : undefined
+
+  if (rendererUrl) {
+    await mainWindow.loadURL(rendererUrl)
   } else {
     await mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
   }

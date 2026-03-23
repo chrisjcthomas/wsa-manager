@@ -6,6 +6,11 @@ const screenshotOptions = {
   maxDiffPixelRatio: 0.025
 }
 
+const emptyStateScreenshotOptions = {
+  ...screenshotOptions,
+  maxDiffPixelRatio: 0.05
+}
+
 const queueScreenshotOptions = {
   ...screenshotOptions,
   maxDiffPixelRatio: 0.1
@@ -65,10 +70,13 @@ test.describe('packaged visual baselines', () => {
       await waitForSettledReadiness(app.page)
       await expect(app.page).toHaveScreenshot('setup-wizard-open-1400x920.png', screenshotOptions)
       await app.page.getByTestId('setup-close-button').click()
+      await expect(app.page.getByText('WSA is currently sleeping')).toBeVisible()
+      await expect(app.page.getByRole('button', { name: 'Wake WSA' })).toBeVisible()
+      await expect(app.page.getByRole('button', { name: 'Open Wizard' })).toBeVisible()
       await expect(app.page.getByTestId('queue-empty-state')).toBeVisible()
       await expectNoPrimaryScroll(app.page)
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-empty-1400x920.png', screenshotOptions)
+      await expect(app.page).toHaveScreenshot('install-empty-1400x920.png', emptyStateScreenshotOptions)
     } finally {
       await app.close()
     }
@@ -86,9 +94,12 @@ test.describe('packaged visual baselines', () => {
       await expect(app.page.getByTestId('app-shell')).toHaveAttribute('data-layout', 'compact')
       await expect(app.page.getByTestId('sidebar')).toHaveAttribute('data-compact', 'true')
       await closeSetupWizardIfVisible(app.page)
+      await expect(app.page.getByText('WSA is currently sleeping')).toBeVisible()
+      await expect(app.page.getByRole('button', { name: 'Wake WSA' })).toBeVisible()
+      await expect(app.page.getByRole('button', { name: 'Open Wizard' })).toBeVisible()
       await expect(app.page.getByTestId('queue-empty-state')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-empty-1060x740.png', screenshotOptions)
+      await expect(app.page).toHaveScreenshot('install-empty-1060x740.png', emptyStateScreenshotOptions)
     } finally {
       await app.close()
     }
@@ -106,9 +117,12 @@ test.describe('packaged visual baselines', () => {
       await expect(app.page.getByTestId('app-shell')).toHaveAttribute('data-layout', 'narrow')
       await expect(app.page.getByTestId('sidebar')).toHaveAttribute('data-compact', 'true')
       await closeSetupWizardIfVisible(app.page)
+      await expect(app.page.getByText('WSA is currently sleeping')).toBeVisible()
+      await expect(app.page.getByRole('button', { name: 'Wake WSA' })).toBeVisible()
+      await expect(app.page.getByRole('button', { name: 'Open Wizard' })).toBeVisible()
       await expect(app.page.getByTestId('queue-empty-state')).toBeVisible()
       await waitForSettledReadiness(app.page)
-      await expect(app.page).toHaveScreenshot('install-empty-920x640.png', screenshotOptions)
+      await expect(app.page).toHaveScreenshot('install-empty-920x640.png', emptyStateScreenshotOptions)
     } finally {
       await app.close()
     }

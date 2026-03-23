@@ -59,6 +59,44 @@ describe('CleanupService apply', () => {
     expect(settingsStore.recordCleanup).not.toHaveBeenCalled()
   })
 
+  it('rejects cleanup requests when apply runs before any scan snapshot exists', async () => {
+    const service = createService(settingsStore)
+    const requestedFinding = createDesktopFinding(path.join(electronPaths.desktop, 'Cinexplore.lnk'))
+
+    const result = await service.apply([requestedFinding])
+
+    expect(result.removed).toHaveLength(0)
+    expect(result.failed).toEqual([
+      expect.objectContaining({
+        findingId: requestedFinding.id,
+        reason: expect.stringContaining('latest scan results')
+      })
+    ])
+  })
+
+  it('rejects cleanup requests when only the target matches but the finding id changed', async () => {
+    const service = createService(settingsStore)
+    const shortcutPath = path.join(electronPaths.desktop, 'Cinexplore.lnk')
+    const scannedFinding = createDesktopFinding(shortcutPath)
+
+    ;(service as any).latestScanFindings = new Map([[scannedFinding.id, scannedFinding]])
+
+    const result = await service.apply([
+      {
+        ...scannedFinding,
+        id: 'com.fidloo.cinexplore:desktop:1'
+      }
+    ])
+
+    expect(result.removed).toHaveLength(0)
+    expect(result.failed).toEqual([
+      expect.objectContaining({
+        findingId: 'com.fidloo.cinexplore:desktop:1',
+        reason: expect.stringContaining('latest scan results')
+      })
+    ])
+  })
+
   it('removes findings that exactly match the latest scan results', async () => {
     const service = createService(settingsStore)
     const shortcutPath = path.join(electronPaths.desktop, 'Cinexplore.lnk')

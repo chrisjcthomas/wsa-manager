@@ -5,61 +5,14 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
-    inputs:
-      tag:
-        description: Existing tag to publish
-        required: true
-        type: string
-
-permissions:
-  contents: write
 
 jobs:
   build-release:
     runs-on: windows-latest
-    env:
-      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v4
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run release:build
-      - name: Pack portable smoke build
-        shell: pwsh
-        run: |
-          $portableZip = Join-Path $PWD "release/WSA.Manager.portable.$env:RELEASE_TAG.zip"
-          Compress-Archive -Path "release/win-unpacked/*" -DestinationPath $portableZip -Force
-      - uses: actions/upload-artifact@v7
-        with:
-          name: wsa-manager-release
-          path: |
-            release/WSA.Manager.Setup.*.exe
-            release/WSA.Manager.Setup.*.exe.blockmap
-            release/WSA.Manager.portable.*.zip
-            release/build-manifest.json
-      - name: Publish GitHub release
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $installer = Get-ChildItem release -Filter "WSA.Manager.Setup.*.exe" | Where-Object { $_.Name -notlike "*.blockmap" } | Select-Object -First 1
-          if (-not $installer) {
-            throw "Installer not found in release/."
-          }
-
-          $blockmap = Get-Item "$($installer.FullName).blockmap"
-          $portableZip = Get-ChildItem release -Filter "WSA.Manager.portable.*.zip" | Select-Object -First 1
-          $manifest = Join-Path $PWD "release/build-manifest.json"
-          $assets = @($installer.FullName, $blockmap.FullName, $portableZip.FullName, $manifest)
-
-          gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY *> $null
-          if ($LASTEXITCODE -eq 0) {
-            gh release upload $env:RELEASE_TAG $assets --clobber --repo $env:GITHUB_REPOSITORY
-          } else {
-            gh release create $env:RELEASE_TAG $assets --title "WSA Manager $env:RELEASE_TAG" --generate-notes --repo $env:GITHUB_REPOSITORY
-          }
+          dotnet-version: 9.0.x
+      - run: dotnet test WsaManager.Native.sln -p:Platform=x64
+      - run: dotnet build WsaManager.Native.sln -p:Platform=x64 -c Release

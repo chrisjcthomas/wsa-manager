@@ -1,127 +1,102 @@
 # WSA Manager
 
-Windows utility for installing, removing, and cleaning up Android apps in Windows Subsystem for Android.
+WSA Manager is a native Windows app for installing Android APK files into Windows Subsystem for Android. It is built for people who do not want to touch ADB, package names, or command prompts: open the app, drop an APK on the dashboard, and let WSA Manager handle the connection and install flow.
 
-![WSA Manager screenshot](docs/screen.png)
+## What It Does
 
-## Install
+- Installs `.apk` files into Windows Subsystem for Android.
+- Wakes WSA and reconnects ADB when the subsystem is sleeping.
+- Detects when an APK is already installed and lets you replace or skip it.
+- Shows installed Android apps with names, package IDs, icons, size/date information when available, and uninstall actions.
+- Keeps a diagnostics log so connection or install failures are easier to understand.
+- Stores fresh native settings for the WinUI app; it does not use the old Electron settings file.
 
-### End users
+## Start Using It
 
-1. Open the [Releases](https://github.com/chrisjcthomas/wsa-manager/releases) page.
-2. Download the latest `WSA.Manager.Setup.<version>.exe`.
-3. Run the installer.
-4. Launch `WSA Manager` from the Start menu.
+Download the latest build from the GitHub Releases page, unzip it, and run `WsaManager.WinUI.exe`.
 
-This is currently an unsigned beta app. Windows SmartScreen may show a warning the first time you run the installer. If that happens, choose `More info` and then `Run anyway`.
+1. Open **Windows Subsystem for Android**.
+2. Go to **Advanced settings**.
+3. Turn on **Developer mode**.
+4. Open **WSA Manager**.
+5. Drop one or more `.apk` files onto the dashboard, or click **Choose APKs**.
+6. Wait for the cards to move through the install steps.
+7. Open **Installed apps** to confirm the app is there or uninstall apps you no longer want.
 
-### Portable test build
-
-Each GitHub release also includes a portable package named `WSA.Manager.portable.<tag>.zip`.
-For example: `WSA.Manager.portable.v0.1.0.zip`.
-
-Use that build when you want to smoke-test the app without installing it into `AppData\Local\Programs`.
+If the dashboard says setup is needed, click **Wake / reconnect**. If it still cannot connect, open WSA Advanced settings and confirm Developer mode is still on. WSA may take a few seconds to start accepting ADB connections after Developer mode is enabled.
 
 ## Requirements
 
 - Windows 11
-- Windows Subsystem for Android installed
-- `adb.exe` available either from Android platform-tools or a manually selected path
+- Windows Subsystem for Android installed and working
+- Developer mode enabled inside WSA Advanced settings
+- Android platform tools, specifically `adb.exe`
 
-## First run
+## Download
 
-On first launch, WSA Manager opens the setup wizard automatically when readiness is incomplete.
+The current downloadable preview build is published on GitHub Releases as:
 
-Typical first-run flow:
+- `WSA.Manager.WinUI.0.2.0.win-x64.zip`
 
-1. Confirm WSA is installed.
-2. Point the app at `adb.exe` if auto-detection does not find it.
-3. Wake WSA if the subsystem is sleeping.
-4. Run the setup check until the app reports ready.
+WSA Manager looks for ADB in common places, including:
 
-Cleanup and diagnostics stay available even when setup is incomplete.
+- A saved path from app settings
+- `ANDROID_SDK_ROOT`
+- `ANDROID_HOME`
+- `%LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe`
+- `%USERPROFILE%\Desktop\platform-tools\adb.exe`
+- `adb.exe` on `PATH`
 
-## Development
+## Project Structure
 
-```bash
-npm ci
-npm run dev
+- `WsaManager.WinUI`: WinUI 3 desktop app.
+- `WsaManager.Core`: testable C# service layer for ADB, WSA readiness, installs, uninstall, settings, diagnostics, and installed app catalog.
+- `WsaManager.Core.Tests`: unit tests for parsers, readiness, ADB resolution, install queue behavior, duplicate install handling, and catalog behavior.
+- `docs/`: active visual references and archived historical notes.
+
+## Development Setup
+
+This project currently targets .NET 9 and Windows App SDK.
+
+On this machine, the local SDK is installed at `C:\tmp\dotnet-sdk`. If you use a normal system-wide .NET install, you may not need the environment setup lines.
+
+```powershell
+$env:DOTNET_CLI_HOME='C:\tmp\dotnet-home'
+$env:PATH='C:\tmp\dotnet-sdk;' + $env:PATH
 ```
 
-### Core commands
+Restore, test, and build from the repository root:
 
-```bash
-npm run validate
-npm run test:ui
-npm run smoke:packaged
-npm run test:visual
-npm run release:build
+```powershell
+dotnet test WsaManager.Native.sln -p:Platform=x64
+dotnet build WsaManager.Native.sln -p:Platform=x64
 ```
 
-Packaged commands are not safe to run in parallel. `npm run smoke:packaged`, `npm run test:visual`, `npm run package:unpacked`, and `npm run release:build` all clean or rewrite `release/`.
+Run the app:
 
-### Canonical app targets
-
-- Local dev: `npm run dev`
-- Packaged smoke target: `release/win-unpacked/WSA Manager.exe`
-- Installer acceptance target: `release/WSA.Manager.Setup.<version>.exe`
-
-Do not validate UI work against the installed `Program Files` copy during development, and never hot-swap `app.asar`.
-
-## UI workflow
-
-- Use `docs/code.html` and `docs/screen.png` as the approved visual reference.
-- Run packaged smoke checks instead of relying on stale local installs.
-- Review screenshot baseline changes intentionally in PRs.
-- Treat screenshot failures as determinism issues first. Check time-sensitive labels, build metadata, diagnostics timestamps, and other dynamic text before refreshing a baseline.
-- Prefer targeted masks and narrow tolerances for dynamic regions over broad snapshot churn.
-
-## Project docs
-
-- Active workflow docs:
-  - `AGENTS.md`
-  - `README.md`
-  - `docs/README.md`
-  - `.github/pull_request_template.md`
-- Historical planning and troubleshooting notes now live under `docs/archive/`.
-
-## Codex Review
-
-Codex review in GitHub is set up in two layers:
-
-1. In Codex settings, turn on `Code review` for `chrisjcthomas/wsa-manager`.
-2. In a pull request comment, write `@codex review`.
-
-Optional:
-
-- Turn on `automatic reviews` in Codex settings if you want every PR reviewed without a comment.
-- Add one-off focus in the comment when needed, for example `@codex review for packaging regressions` or `@codex review for security regressions`.
-
-This repository uses [AGENTS.md](AGENTS.md) to tell Codex what to prioritize during review.
-
-## Releases
-
-Tagged builds publish GitHub releases automatically.
-
-Release tags use the format:
-
-```text
-v0.1.0
+```powershell
+dotnet run --project WsaManager.WinUI\WsaManager.WinUI.csproj -p:Platform=x64
 ```
 
-Each release publishes:
+## Verification
 
-- `WSA.Manager.Setup.<version>.exe`
-- `WSA.Manager.Setup.<version>.exe.blockmap`
-- `WSA.Manager.portable.<tag>.zip`
-- `build-manifest.json`
+Before opening a PR, run:
 
-## Repository workflow
+```powershell
+dotnet test WsaManager.Native.sln -p:Platform=x64
+dotnet build WsaManager.Native.sln -p:Platform=x64
+```
 
-- Work from short-lived branches named `codex/<task>`.
-- Open a PR for every non-trivial change.
-- Run `npm run validate` before every PR.
-- For UI and packaging work, also run `npm run smoke:packaged` and `npm run test:visual`.
-- Request `@codex review` on PRs unless automatic reviews are enabled in Codex settings.
-- Resolve review threads and check branch-policy blockers before assuming a green PR is mergeable.
-- Project-specific workflow skills live under `.codex/skills/` and version with this repository.
+For UI changes, also launch the app and manually check:
+
+- Dashboard APK drop and file picker flow
+- WSA wake/reconnect
+- Duplicate install replace/skip prompt
+- Installed apps list, icons, scrolling, and uninstall
+- Diagnostics entries for failures
+
+## Status
+
+The WinUI app is now the main app in this repository. The earlier Electron app was removed from the root project.
+
+Packaging and installer work are still future work; the current development target is `dotnet run`.

@@ -7,13 +7,11 @@
 ## Validation
 
 - Commands run:
-  - [ ] `npm run validate`
-  - [ ] `npm run smoke:packaged`
-  - [ ] `npm run test:visual`
+  - [ ] `dotnet test WsaManager.Native.sln -p:Platform=x64`
+  - [ ] `dotnet build WsaManager.Native.sln -p:Platform=x64`
 - Artifact tested:
-  - [ ] `npm run dev`
-  - [ ] `release/win-unpacked/WSA Manager.exe`
-  - [ ] `release/WSA.Manager.Setup.<version>.exe`
+  - [ ] `dotnet run --project WsaManager.WinUI\WsaManager.WinUI.csproj -p:Platform=x64`
+  - [ ] Packaged WinUI app
 
 ## Codex review
 

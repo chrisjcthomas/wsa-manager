@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="WsaManager_WinUI.Pages.AppsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="28,18,28,14" RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid RowSpacing="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Installed apps" />
+            <TextBlock
+                Grid.Row="1"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="{Binding AppsFoundText}" />
+            <CommandBar HorizontalAlignment="Right" DefaultLabelPosition="Right">
+                <AppBarButton Click="Refresh_Click" Icon="Refresh" Label="Refresh" />
+            </CommandBar>
+        </Grid>
+
+        <Border
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8" />
+
+        <ListView
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            ItemsSource="{Binding Apps}"
+            SelectionMode="None">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="MinHeight" Value="48" />
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.Header>
+                <Grid Padding="18,10,18,8" ColumnSpacing="18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="2.2*" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="128" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="App" />
+                    <TextBlock Grid.Column="1" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Package" />
+                    <TextBlock Grid.Column="2" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="App size" />
+                    <TextBlock Grid.Column="3" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Date added" />
+                    <TextBlock Grid.Column="4" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Action" />
+                </Grid>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="18,5" ColumnSpacing="18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2.2*" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="128" />
+                        </Grid.ColumnDefinitions>
+                        <Grid ColumnSpacing="10" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="34" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                Width="28"
+                                Height="28"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="4">
+                                <Image
+                                    Width="28"
+                                    Height="28"
+                                    Source="{Binding IconUri}"
+                                    Stretch="UniformToFill" />
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="0">
+                                <TextBlock FontWeight="SemiBold" Text="{Binding Label}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock FontSize="13" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding VersionName}" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding PackageName}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Grid.Column="2" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding SizeLabel}" />
+                        <TextBlock Grid.Column="3" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding DateAddedLabel}" />
+                        <Button
+                            Grid.Column="4"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Click="Uninstall_Click"
+                            Content="Uninstall"
+                            MinHeight="30"
+                            Padding="12,4"
+                            Tag="{Binding PackageName}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

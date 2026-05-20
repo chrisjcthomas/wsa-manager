@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="WsaManager_WinUI.Pages.InstallPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Padding="24,16,24,16" Spacing="16">
+        <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Install APKs" />
+        <InfoBar IsOpen="True" IsClosable="False" Severity="Informational" Title="{Binding StatusText}" Message="{Binding ConnectionStatusText}" />
+        <Border Padding="20" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8">
+            <StackPanel HorizontalAlignment="Center" Spacing="8">
+                <FontIcon FontSize="36" Glyph="&#xE896;" />
+                <TextBlock FontWeight="SemiBold" Text="Choose APK files" />
+                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Files are validated, queued, and installed through ADB." />
+                <Button Click="ChooseApks_Click" Content="Choose APKs" />
+            </StackPanel>
+        </Border>
+        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Queue" />
+        <ListView ItemsSource="{Binding Queue}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="8" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold" Text="{Binding FileName}" />
+                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding Error}" />
+                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding PackageName}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding State}" />
+                        <ProgressBar Grid.Column="2" VerticalAlignment="Center" Maximum="100" Value="{Binding Progress}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+</Page>

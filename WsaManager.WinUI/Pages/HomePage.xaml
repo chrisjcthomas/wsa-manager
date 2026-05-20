@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="WsaManager_WinUI.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:WsaManager_WinUI.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        AllowDrop="True"
+        DragEnter="Dashboard_DragEnter"
+        DragLeave="Dashboard_DragLeave"
+        DragOver="Dashboard_DragOver"
+        Drop="Dashboard_Drop">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#8CA28A" Offset="0" />
+                <GradientStop Color="#2C7974" Offset="0.52" />
+                <GradientStop Color="#F2EFAE" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <ScrollViewer>
+            <StackPanel Padding="44,32,44,36" Spacing="24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Spacing="4">
+                        <TextBlock FontSize="44" FontWeight="Bold" Foreground="White" Text="Dashboard" />
+                        <TextBlock FontSize="24" FontWeight="SemiBold" Foreground="#F8F9E8" Text="Drop APKs here. WSA Manager handles the rest." />
+                    </StackPanel>
+                    <Border Grid.Column="1" Padding="16,10" CornerRadius="12" Background="#CC303836">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock FontWeight="SemiBold" Foreground="#32F3E0" Text="{Binding OperationStatus}" />
+                            <TextBlock Foreground="#F8F9E8" Text="{Binding ConnectionStatusText}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Padding="20" CornerRadius="14" Background="#DD303836" BorderBrush="#445451" BorderThickness="1">
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="48" Height="48" CornerRadius="12" Background="#FFB01F">
+                            <FontIcon Foreground="#071018" Glyph="&#xE7BA;" />
+                        </Border>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock FontSize="20" FontWeight="Bold" Foreground="White" Text="{Binding StatusText}" />
+                            <TextBlock Foreground="#E5EAD9" Text="{Binding ConnectionSummaryText}" />
+                        </StackPanel>
+                        <Border Grid.Column="2" Padding="14,8" CornerRadius="10" Background="#663A4541">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <TextBlock FontWeight="SemiBold" Foreground="#32F3E0" Text="{Binding OperationStatus}" />
+                                <TextBlock Foreground="#F8F9E8" Text="{Binding InlineStatusDetailText}" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </Border>
+                        <Button Grid.Column="3" Click="Wake_Click" Content="Wake / reconnect" />
+                    </Grid>
+                </Border>
+
+                <Border
+                    x:Name="DropZone"
+                    MinHeight="310"
+                    Padding="30"
+                    Background="#55334E49"
+                    BorderBrush="#EAF1DA"
+                    BorderThickness="3"
+                    CornerRadius="34">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+                        <Border Width="94" Height="94" CornerRadius="47" Background="#33FFFFFF" BorderBrush="#88FFFFFF" BorderThickness="1">
+                            <FontIcon FontSize="42" Foreground="White" Glyph="&#xE898;" />
+                        </Border>
+                        <TextBlock x:Name="DropZoneTitle" HorizontalAlignment="Center" FontSize="42" FontWeight="Bold" Foreground="White" Text="Add APK files" />
+                        <TextBlock x:Name="DropZoneSubtitle" MaxWidth="620" TextAlignment="Center" FontSize="20" FontWeight="SemiBold" Foreground="#F8F9E8" Text="Drag and drop Android packages here, or choose files from your computer." TextWrapping="WrapWholeWords" />
+                        <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                            <Button Click="ChooseApks_Click" Content="Choose APKs" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Grid ColumnSpacing="18" RowSpacing="18">
+                    <ItemsRepeater ItemsSource="{Binding Queue}">
+                        <ItemsRepeater.Layout>
+                            <UniformGridLayout MinItemWidth="300" MinColumnSpacing="18" MinRowSpacing="18" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate>
+                                <Border MinHeight="190" Padding="22" CornerRadius="22" Background="#CC283B36" BorderBrush="#66415F56" BorderThickness="1">
+                                    <StackPanel Spacing="14">
+                                        <Grid>
+                                            <TextBlock FontSize="20" FontWeight="Bold" Foreground="White" Text="{Binding FileName}" TextTrimming="CharacterEllipsis" />
+                                            <Border HorizontalAlignment="Right" Padding="10,4" CornerRadius="6" Background="#263EF0D5">
+                                                <TextBlock FontSize="12" FontWeight="Bold" Foreground="#35F4E0" Text="{Binding State}" />
+                                            </Border>
+                                        </Grid>
+                                        <TextBlock Foreground="#B9C8D3" Text="{Binding PackageName}" TextTrimming="CharacterEllipsis" />
+                                        <ProgressBar Maximum="100" Value="{Binding Progress}" />
+                                        <TextBlock Foreground="#F7C6C6" Text="{Binding Error}" TextWrapping="WrapWholeWords" />
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <Button Click="ReplaceQueued_Click" Content="Replace app" Tag="{Binding Id}" />
+                                            <Button Click="SkipQueued_Click" Content="Skip" Tag="{Binding Id}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

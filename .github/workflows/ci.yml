@@ -8,95 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  changes:
-    runs-on: windows-latest
-    outputs:
-      needs_packaged: ${{ steps.scope.outputs.needs_packaged }}
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - id: scope
-        shell: pwsh
-        run: |
-          $needsPackaged = "true"
-
-          if ("${{ github.event_name }}" -eq "pull_request") {
-            $base = "${{ github.event.pull_request.base.sha }}"
-            $head = "${{ github.event.pull_request.head.sha }}"
-            $files = git diff --name-only $base $head
-            $patterns = @(
-              '^src/',
-              '^tests/',
-              '^scripts/',
-              '^package\.json$',
-              '^package-lock\.json$',
-              '^electron\.vite\.config\.',
-              '^playwright\.config\.',
-              '^tsconfig',
-              '^postcss\.config',
-              '^tailwind\.config',
-              '^\.github/workflows/ci\.yml$',
-              '^\.github/workflows/release\.yml$'
-            )
-
-            $needsPackaged = if ($files | Where-Object {
-              $file = $_
-              $patterns | Where-Object { $file -match $_ }
-            }) {
-              "true"
-            } else {
-              "false"
-            }
-          }
-
-          "needs_packaged=$needsPackaged" >> $env:GITHUB_OUTPUT
-
-  validate:
+  build-and-test:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-dotnet@v4
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run validate
-
-  packaged-smoke:
-    runs-on: windows-latest
-    needs: [changes, validate]
-    steps:
-      - name: Skip packaged smoke for doc-only PRs
-        if: github.event_name == 'pull_request' && needs.changes.outputs.needs_packaged != 'true'
-        run: echo "No packaged-app inputs changed in this PR; skipping packaged smoke."
-      - uses: actions/checkout@v6
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
-      - uses: actions/setup-node@v6
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
-      - run: npm run smoke:packaged
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
-
-  visual-baselines:
-    runs-on: windows-latest
-    needs: [changes, validate]
-    steps:
-      - name: Skip visual baselines for doc-only PRs
-        if: github.event_name == 'pull_request' && needs.changes.outputs.needs_packaged != 'true'
-        run: echo "No packaged-app inputs changed in this PR; skipping visual baselines."
-      - uses: actions/checkout@v6
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
-      - uses: actions/setup-node@v6
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
-      - run: npm run test:visual
-        if: github.event_name != 'pull_request' || needs.changes.outputs.needs_packaged == 'true'
+          dotnet-version: 9.0.x
+      - run: dotnet test WsaManager.Native.sln -p:Platform=x64
+      - run: dotnet build WsaManager.Native.sln -p:Platform=x64

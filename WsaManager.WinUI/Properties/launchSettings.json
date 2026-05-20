@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "WsaManager.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "WsaManager.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

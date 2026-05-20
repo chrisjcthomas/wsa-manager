@@ -1,13 +1,13 @@
 ---
 name: visual-baseline-debug
-description: Triage Playwright and packaged Electron screenshot mismatches for WSA Manager, with a bias toward deterministic baselines instead of blind snapshot refreshes.
+description: Triage WinUI screenshot or visual mismatches for WSA Manager, with a bias toward deterministic evidence instead of blind refreshes.
 ---
 
 # Visual Baseline Debug
 
 1. Validate against the unpacked build only. Do not compare the installed app copy.
-2. Run packaged commands serially. `npm run test:visual`, `npm run smoke:packaged`, `npm run package:unpacked`, and `npm run release:build` all rewrite `release/`.
-3. Reproduce with `npm run test:visual` before updating any snapshots.
+2. Build with `dotnet build WsaManager.Native.sln -p:Platform=x64` before visual review.
+3. Reproduce in the WinUI app before updating any screenshots or mock references.
 4. Treat mismatches as determinism issues first. Check for:
    - timestamps or relative-time labels
    - build labels or version strings

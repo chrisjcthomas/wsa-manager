@@ -9,25 +9,22 @@
   - `docs/README.md`
   - `.github/pull_request_template.md`
 - The only valid app targets are:
-  - local dev: `npm run dev`
-  - packaged smoke target: `release/win-unpacked/WSA Manager.exe`
-  - installer acceptance target: `release/WSA.Manager.Setup.<version>.exe`
+  - local dev: `dotnet run --project WsaManager.WinUI\WsaManager.WinUI.csproj -p:Platform=x64`
+  - solution build: `dotnet build WsaManager.Native.sln -p:Platform=x64`
+  - solution tests: `dotnet test WsaManager.Native.sln -p:Platform=x64`
 - Historical planning and troubleshooting notes live under `docs/archive/` and are not the live workflow source of truth.
-- Never hot-swap `app.asar`.
-- `npm run smoke:packaged`, `npm run test:visual`, `npm run package:unpacked`, and `npm run release:build` all clean or rewrite `release/`. Never run them in parallel.
-- `src/` and `tests/` are authoring trees. Generated `.js` and generated `.d.ts` sidecars do not belong there.
+- Do not reintroduce the removed Electron app, Node packaging pipeline, or `app.asar` workflow.
+- `WsaManager.Core`, `WsaManager.Core.Tests`, and `WsaManager.WinUI` are the active authoring trees.
+- Generated `bin/`, `obj/`, `AppPackages/`, and publish artifacts do not belong in source control.
 - When a bug repeats twice, add or update a repo rule, skill, or harness check instead of relying on session memory.
 
 ## Build and test commands
 
-- `npm run validate`
-- `npm run test:ui`
-- `npm run test:visual`
-- `npm run smoke:packaged`
-- `npm run release:clean`
-- `npm run release:build`
+- `dotnet test WsaManager.Native.sln -p:Platform=x64`
+- `dotnet build WsaManager.Native.sln -p:Platform=x64`
+- `dotnet run --project WsaManager.WinUI\WsaManager.WinUI.csproj -p:Platform=x64`
 
-Run `npm run validate` before every PR. For UI or packaging changes, also run `npm run smoke:packaged` and `npm run test:visual`.
+Run `dotnet test` and `dotnet build` before every PR. For UI changes, manually launch the WinUI app and include screenshots when useful.
 
 ## UI source of truth
 
@@ -42,7 +39,7 @@ Run `npm run validate` before every PR. For UI or packaging changes, also run `n
 
 ## Review guidelines
 
-- Treat preload bridge failures, packaged startup blank screens, and infinite boot states as high-severity regressions.
+- Treat ADB bridge failures, WSA wake/reconnect regressions, app uninstall failures, packaged startup blank screens, and infinite boot states as high-severity regressions.
 - Flag any change that reintroduces vertical scrolling in the default dashboard empty state.
 - Flag any change that lets compiled source sidecars or temp screenshots leak into the repository.
 - Flag any packaging change that creates multiple competing installer locations or nested versioned release directories.

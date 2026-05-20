@@ -20,46 +20,41 @@ jobs:
     env:
       RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
+          persist-credentials: false
           ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run release:build
-      - name: Pack portable smoke build
+          dotnet-version: 9.0.x
+      - run: dotnet test WsaManager.Native.sln -p:Platform=x64
+      - run: dotnet build WsaManager.Native.sln -p:Platform=x64 -c Release
+      - name: Publish WinUI zip
         shell: pwsh
         run: |
-          $portableZip = Join-Path $PWD "release/WSA.Manager.portable.$env:RELEASE_TAG.zip"
-          Compress-Archive -Path "release/win-unpacked/*" -DestinationPath $portableZip -Force
-      - uses: actions/upload-artifact@v7
+          $version = $env:RELEASE_TAG.TrimStart("v")
+          $publishDir = Join-Path $PWD "artifacts/WSA.Manager.WinUI.$version.win-x64"
+          $zipPath = Join-Path $PWD "artifacts/WSA.Manager.WinUI.$version.win-x64.zip"
+          New-Item -ItemType Directory -Path $publishDir -Force | Out-Null
+          dotnet publish WsaManager.WinUI\WsaManager.WinUI.csproj -c Release -p:Platform=x64 -r win-x64 --self-contained true -o $publishDir
+          Compress-Archive -Path "$publishDir/*" -DestinationPath $zipPath -Force
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: wsa-manager-release
-          path: |
-            release/WSA.Manager.Setup.*.exe
-            release/WSA.Manager.Setup.*.exe.blockmap
-            release/WSA.Manager.portable.*.zip
-            release/build-manifest.json
+          name: wsa-manager-winui-${{ env.RELEASE_TAG }}
+          path: artifacts/WSA.Manager.WinUI.*.win-x64.zip
       - name: Publish GitHub release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $installer = Get-ChildItem release -Filter "WSA.Manager.Setup.*.exe" | Where-Object { $_.Name -notlike "*.blockmap" } | Select-Object -First 1
-          if (-not $installer) {
-            throw "Installer not found in release/."
+          $asset = Get-ChildItem artifacts -Filter "WSA.Manager.WinUI.*.win-x64.zip" | Select-Object -First 1
+          if (-not $asset) {
+            throw "Release zip was not produced."
           }
-
-          $blockmap = Get-Item "$($installer.FullName).blockmap"
-          $portableZip = Get-ChildItem release -Filter "WSA.Manager.portable.*.zip" | Select-Object -First 1
-          $manifest = Join-Path $PWD "release/build-manifest.json"
-          $assets = @($installer.FullName, $blockmap.FullName, $portableZip.FullName, $manifest)
 
           gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY *> $null
           if ($LASTEXITCODE -eq 0) {
-            gh release upload $env:RELEASE_TAG $assets --clobber --repo $env:GITHUB_REPOSITORY
+            gh release upload $env:RELEASE_TAG $asset.FullName --clobber --repo $env:GITHUB_REPOSITORY
           } else {
-            gh release create $env:RELEASE_TAG $assets --title "WSA Manager $env:RELEASE_TAG" --generate-notes --repo $env:GITHUB_REPOSITORY
+            gh release create $env:RELEASE_TAG $asset.FullName --title "WSA Manager $env:RELEASE_TAG" --notes "Download the WinUI zip, unzip it, and run WsaManager.WinUI.exe." --repo $env:GITHUB_REPOSITORY
           }

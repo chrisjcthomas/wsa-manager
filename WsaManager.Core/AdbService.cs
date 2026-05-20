@@ -169,7 +169,7 @@ public sealed class AdbService
                 return;
             }
 
-            var normalized = System.IO.Path.GetFullPath(Environment.ExpandEnvironmentVariables(path));
+            var normalized = System.IO.Path.GetFullPath(ExpandEnvironmentVariables(path));
             if (seen.Add(normalized))
             {
                 candidates.Add((normalized, source));
@@ -196,5 +196,14 @@ public sealed class AdbService
         }
 
         return candidates;
+    }
+
+    private string ExpandEnvironmentVariables(string path)
+    {
+        return System.Text.RegularExpressions.Regex.Replace(path, "%([^%]+)%", match =>
+        {
+            var value = getEnvironmentVariable(match.Groups[1].Value);
+            return value ?? match.Value;
+        });
     }
 }

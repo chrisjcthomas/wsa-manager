@@ -26,7 +26,9 @@ public sealed class CatalogService
 
     public async Task<IReadOnlyList<InstalledAppEntry>> ListInstalledAppsAsync(CancellationToken cancellationToken = default)
     {
-        var historyByPackage = settingsStore.Get().RecentInstalls.ToDictionary(entry => entry.PackageName, StringComparer.OrdinalIgnoreCase);
+        var historyByPackage = settingsStore.Get().RecentInstalls
+            .GroupBy(entry => entry.PackageName, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
         var packages = await adbService.ListUserPackagesAsync(cancellationToken: cancellationToken);
         IReadOnlyList<WindowsWsaAppRegistration> registrations = windowsCatalog is null
             ? []

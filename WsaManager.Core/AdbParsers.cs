@@ -4,6 +4,16 @@ namespace WsaManager.Core;
 
 public static class AdbParsers
 {
+    private static readonly HashSet<string> DeviceStatuses = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "device",
+        "offline",
+        "unauthorized",
+        "recovery",
+        "sideload",
+        "rescue"
+    };
+
     public static string? ParseAdbVersion(string output)
     {
         var match = Regex.Match(output, @"Android Debug Bridge version\s+([^\s]+)", RegexOptions.IgnoreCase);
@@ -18,6 +28,7 @@ public static class AdbParsers
             .Where(line => line.Length > 0 && !line.StartsWith("List of devices", StringComparison.OrdinalIgnoreCase))
             .Select(line => Regex.Split(line, @"\s+"))
             .Where(parts => parts.Length >= 2)
+            .Where(parts => DeviceStatuses.Contains(parts[1]))
             .Select(parts => new ParsedDevice { Serial = parts[0], Status = parts[1] })
             .ToList();
     }

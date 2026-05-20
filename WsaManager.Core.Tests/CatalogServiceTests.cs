@@ -64,10 +64,10 @@ public sealed class CatalogServiceTests
         var firefox = apps.Single(app => app.PackageName == "org.mozilla.firefox");
 
         Assert.AreEqual("12.8 MB", mobiflix.SizeLabel);
-        Assert.AreEqual("5/19/2026", mobiflix.DateAddedLabel);
+        Assert.AreEqual(new DateTimeOffset(2026, 5, 19, 12, 18, 24, TimeSpan.Zero).LocalDateTime.ToString("M/d/yyyy"), mobiflix.DateAddedLabel);
         Assert.AreEqual("1.0.0", mobiflix.VersionName);
         Assert.AreEqual("--", firefox.SizeLabel);
-        Assert.AreEqual("5/18/2026", firefox.DateAddedLabel);
+        Assert.AreEqual(new DateTimeOffset(2026, 5, 18, 10, 0, 0, TimeSpan.Zero).LocalDateTime.ToString("M/d/yyyy"), firefox.DateAddedLabel);
     }
 
     [TestMethod]

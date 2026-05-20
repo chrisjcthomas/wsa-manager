@@ -22,9 +22,15 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <ScrollViewer>
-            <StackPanel Padding="44,32,44,36" Spacing="24">
-                <Grid>
+        <Grid Padding="44,32,44,36" RowSpacing="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -39,9 +45,9 @@
                             <TextBlock Foreground="#F8F9E8" Text="{Binding ConnectionStatusText}" />
                         </StackPanel>
                     </Border>
-                </Grid>
+            </Grid>
 
-                <Border Padding="20" CornerRadius="14" Background="#DD303836" BorderBrush="#445451" BorderThickness="1">
+            <Border Grid.Row="1" Padding="20" CornerRadius="14" Background="#DD303836" BorderBrush="#445451" BorderThickness="1">
                     <Grid ColumnSpacing="16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -64,10 +70,11 @@
                         </Border>
                         <Button Grid.Column="3" Click="Wake_Click" Content="Wake / reconnect" />
                     </Grid>
-                </Border>
+            </Border>
 
-                <Border
+            <Border
                     x:Name="DropZone"
+                    Grid.Row="2"
                     MinHeight="310"
                     Padding="30"
                     Background="#55334E49"
@@ -84,8 +91,9 @@
                             <Button Click="ChooseApks_Click" Content="Choose APKs" />
                         </StackPanel>
                     </StackPanel>
-                </Border>
+            </Border>
 
+            <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
                 <Grid ColumnSpacing="18" RowSpacing="18">
                     <ItemsRepeater ItemsSource="{Binding Queue}">
                         <ItemsRepeater.Layout>
@@ -114,7 +122,7 @@
                         </ItemsRepeater.ItemTemplate>
                     </ItemsRepeater>
                 </Grid>
-            </StackPanel>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>

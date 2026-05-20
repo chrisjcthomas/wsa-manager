@@ -73,6 +73,7 @@ public sealed partial class HomePage : Page
     {
         if (!e.DataView.Contains(StandardDataFormats.StorageItems))
         {
+            ResetDropZone();
             return;
         }
 

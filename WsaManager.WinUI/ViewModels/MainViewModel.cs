@@ -14,6 +14,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
     private readonly InstallQueueService installQueue;
     private readonly CatalogService catalog;
     private readonly DispatcherQueue dispatcherQueue;
+    private readonly SemaphoreSlim busyGate = new(1, 1);
     private SettingsState settings;
     private ReadinessSnapshot? readiness;
     private string? errorMessage;
@@ -241,6 +242,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private async Task RunBusyAsync(Func<Task> work)
     {
+        await busyGate.WaitAsync();
         IsBusy = true;
         ErrorMessage = null;
         try
@@ -255,12 +257,19 @@ public sealed class MainViewModel : INotifyPropertyChanged
         finally
         {
             IsBusy = false;
+            busyGate.Release();
         }
     }
 
     private void EnqueueOnUi(Action action)
     {
-        dispatcherQueue.TryEnqueue(() => action());
+        if (dispatcherQueue.HasThreadAccess)
+        {
+            action();
+            return;
+        }
+
+        _ = dispatcherQueue.TryEnqueue(() => action());
     }
 
     private static void Replace<T>(ObservableCollection<T> collection, IEnumerable<T> items)

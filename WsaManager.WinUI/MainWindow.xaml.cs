@@ -21,14 +21,49 @@ public sealed partial class MainWindow : Window
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         AppWindow.SetIcon("Assets/AppIcon.ico");
         NavFrame.Navigate(typeof(HomePage));
-        _ = ((App)Application.Current).ViewModel.InitializeAsync();
+        _ = InitializeViewModelAsync();
         readinessTimer.Tick += ReadinessTimer_Tick;
         readinessTimer.Start();
+        Closed += MainWindow_Closed;
+    }
+
+    private async Task InitializeViewModelAsync()
+    {
+        try
+        {
+            await ((App)Application.Current).ViewModel.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            ((App)Application.Current).ViewModel.Diagnostics.Add(new WsaManager.Core.DiagnosticLogEntry
+            {
+                Id = Guid.NewGuid().ToString("n"),
+                Timestamp = DateTimeOffset.UtcNow,
+                Level = WsaManager.Core.DiagnosticLevel.Error,
+                Source = "ui",
+                Message = "Startup failed",
+                Detail = ex.Message
+            });
+        }
     }
 
     private async void ReadinessTimer_Tick(object? sender, object e)
     {
-        await ((App)Application.Current).ViewModel.RefreshReadinessIfIdleAsync();
+        try
+        {
+            await ((App)Application.Current).ViewModel.RefreshReadinessIfIdleAsync();
+        }
+        catch
+        {
+            // Periodic readiness checks should never close the app.
+        }
+    }
+
+    private void MainWindow_Closed(object sender, WindowEventArgs args)
+    {
+        readinessTimer.Stop();
+        readinessTimer.Tick -= ReadinessTimer_Tick;
+        Closed -= MainWindow_Closed;
     }
 
     private void TitleBar_PaneToggleRequested(TitleBar sender, object args)

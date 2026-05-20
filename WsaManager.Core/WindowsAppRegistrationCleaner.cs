@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace WsaManager.Core;
 
@@ -21,6 +22,12 @@ public sealed class WindowsAppRegistrationCleaner
 
     public async Task<WindowsCleanupResult> CleanupWsaAppRegistrationAsync(string packageName, CancellationToken cancellationToken = default)
     {
+        if (!Regex.IsMatch(packageName, @"^[A-Za-z0-9_.]+$"))
+        {
+            diagnostics.Log(DiagnosticLevel.Warn, "windows-cleanup", $"Skipped Windows cleanup for invalid package name {packageName}");
+            return new WindowsCleanupResult { Errors = ["Invalid package name."] };
+        }
+
         const string script = @"
 $ErrorActionPreference = 'Continue'
 $packageName = $env:WSA_MANAGER_PACKAGE_NAME

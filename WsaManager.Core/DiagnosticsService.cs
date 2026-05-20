@@ -3,10 +3,20 @@ namespace WsaManager.Core;
 public sealed class DiagnosticsService
 {
     private readonly List<DiagnosticLogEntry> entries = [];
+    private readonly object syncRoot = new();
 
     public event EventHandler<DiagnosticLogEntry>? EntryAdded;
 
-    public IReadOnlyList<DiagnosticLogEntry> Entries => entries.ToList();
+    public IReadOnlyList<DiagnosticLogEntry> Entries
+    {
+        get
+        {
+            lock (syncRoot)
+            {
+                return entries.ToList();
+            }
+        }
+    }
 
     public DiagnosticLogEntry Log(DiagnosticLevel level, string source, string message, string? detail = null)
     {
@@ -20,15 +30,24 @@ public sealed class DiagnosticsService
             Detail = detail
         };
 
-        entries.Insert(0, entry);
-        if (entries.Count > 300)
+        lock (syncRoot)
         {
-            entries.RemoveRange(300, entries.Count - 300);
+            entries.Insert(0, entry);
+            if (entries.Count > 300)
+            {
+                entries.RemoveRange(300, entries.Count - 300);
+            }
         }
 
         EntryAdded?.Invoke(this, entry);
         return entry;
     }
 
-    public void Clear() => entries.Clear();
+    public void Clear()
+    {
+        lock (syncRoot)
+        {
+            entries.Clear();
+        }
+    }
 }

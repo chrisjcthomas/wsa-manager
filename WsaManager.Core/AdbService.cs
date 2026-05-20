@@ -116,7 +116,12 @@ public sealed class AdbService
 
     public async Task<bool> PullFileAsync(string devicePath, string localPath, int timeoutMs = 60_000, CancellationToken cancellationToken = default)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(localPath)!);
+        var directory = Path.GetDirectoryName(localPath);
+        if (!string.IsNullOrWhiteSpace(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         var result = await ExecAdbAsync(["pull", devicePath, localPath], timeoutMs, cancellationToken);
         return result.ExitCode == 0 && File.Exists(localPath);
     }

@@ -44,7 +44,7 @@ public sealed class SettingsStore
     public SettingsState RecordInstall(InstallHistoryEntry entry)
     {
         cache.RecentInstalls = new[] { entry }
-            .Concat(cache.RecentInstalls.Where(item => item.PackageName != entry.PackageName))
+            .Concat(cache.RecentInstalls.Where(item => !string.Equals(item.PackageName, entry.PackageName, StringComparison.OrdinalIgnoreCase)))
             .Take(50)
             .ToList();
         Save();

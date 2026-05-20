@@ -198,8 +198,7 @@ public sealed class WsaService
         int devicesTimeoutMs = 30_000,
         CancellationToken cancellationToken = default)
     {
-        var devices = await WithTimeoutAsync(adbService.ListDevicesAsync(devicesTimeoutMs, cancellationToken), devicesTimeoutMs, "ADB devices listing")
-            .ContinueWith(task => task.Status == TaskStatus.RanToCompletion ? task.Result : [], cancellationToken);
+        var devices = await ListDevicesOrEmptyAsync(devicesTimeoutMs, cancellationToken);
         var candidates = new List<string> { DefaultEndpoint };
         candidates.AddRange(devices.Select(device => device.Serial).Where(serial => serial.StartsWith("127.0.0.1:", StringComparison.OrdinalIgnoreCase)));
         if (!string.IsNullOrWhiteSpace(manualEndpoint))
@@ -241,10 +240,14 @@ public sealed class WsaService
                     };
                 }
             }
-            catch (Exception ex) when (ex is TimeoutException || ex.Message.Contains("timed out", StringComparison.OrdinalIgnoreCase))
+            catch (Exception ex)
             {
-                sawTimedOutCandidate = true;
-                diagnostics.Log(DiagnosticLevel.Warn, "wsa", $"Timed out connecting to {candidate}", ex.Message);
+                if (ex is TimeoutException || ex.Message.Contains("timed out", StringComparison.OrdinalIgnoreCase))
+                {
+                    sawTimedOutCandidate = true;
+                }
+
+                diagnostics.Log(DiagnosticLevel.Warn, "wsa", $"Failed connecting to {candidate}", ex.Message);
             }
         }
 
@@ -292,6 +295,23 @@ public sealed class WsaService
 
         retry.CheckedEndpoints = checkedEndpoints;
         return retry;
+    }
+
+    private async Task<IReadOnlyList<AdbDevice>> ListDevicesOrEmptyAsync(int devicesTimeoutMs, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await WithTimeoutAsync(adbService.ListDevicesAsync(devicesTimeoutMs, cancellationToken), devicesTimeoutMs, "ADB devices listing");
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            diagnostics.Log(DiagnosticLevel.Warn, "adb", "Could not list ADB devices", ex.Message);
+            return [];
+        }
     }
 
     private async Task<WsaPackageInfo?> GetInstalledPackageAsync(CancellationToken cancellationToken)

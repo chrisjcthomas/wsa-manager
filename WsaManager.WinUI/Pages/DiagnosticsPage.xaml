@@ -7,14 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Padding="24,16,24,16" Spacing="16">
+    <Grid Padding="24,16,24,16" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Diagnostics" />
-        <CommandBar DefaultLabelPosition="Right">
+        <CommandBar Grid.Row="1" DefaultLabelPosition="Right">
             <AppBarButton Click="Refresh_Click" Icon="Refresh" Label="Run checks" />
             <AppBarButton Click="Clear_Click" Icon="Delete" Label="Clear" />
         </CommandBar>
-        <InfoBar IsOpen="True" IsClosable="False" Severity="Informational" Title="{Binding StatusText}" Message="{Binding ConnectionStatusText}" />
-        <ListView ItemsSource="{Binding Diagnostics}">
+        <InfoBar Grid.Row="2" IsOpen="True" IsClosable="False" Severity="Informational" Title="{Binding StatusText}" Message="{Binding ConnectionStatusText}" />
+        <ListView Grid.Row="3" ItemsSource="{Binding Diagnostics}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="8" ColumnSpacing="12">
@@ -33,5 +39,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </StackPanel>
+    </Grid>
 </Page>

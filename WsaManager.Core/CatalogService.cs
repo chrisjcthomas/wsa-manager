@@ -111,7 +111,7 @@ public sealed class CatalogService
 
         var iconDirectory = Path.Combine(settingsStore.AppDataDirectory, "icons");
         var cachedIcon = Directory.Exists(iconDirectory)
-            ? Directory.EnumerateFiles(iconDirectory, $"{SafeFileName(packageName)}.*").FirstOrDefault()
+            ? Directory.EnumerateFiles(iconDirectory, $"{FileNames.SafeFileName(packageName)}.*").FirstOrDefault()
             : null;
         if (cachedIcon is not null)
         {
@@ -127,7 +127,7 @@ public sealed class CatalogService
             }
 
             var apkCacheDirectory = Path.Combine(settingsStore.AppDataDirectory, "apk-cache");
-            var localApkPath = Path.Combine(apkCacheDirectory, $"{SafeFileName(packageName)}.apk");
+            var localApkPath = Path.Combine(apkCacheDirectory, $"{FileNames.SafeFileName(packageName)}.apk");
             if (!File.Exists(localApkPath) && !await adbService.PullFileAsync(deviceApkPath, localApkPath, cancellationToken: cancellationToken))
             {
                 return null;
@@ -170,7 +170,7 @@ public sealed class CatalogService
         {
             var iconDirectory = Path.Combine(settingsStore.AppDataDirectory, "icons");
             Directory.CreateDirectory(iconDirectory);
-            var copiedPath = Path.Combine(iconDirectory, $"{SafeFileName(packageName)}{Path.GetExtension(iconPath)}");
+            var copiedPath = Path.Combine(iconDirectory, $"{FileNames.SafeFileName(packageName)}{Path.GetExtension(iconPath)}");
             File.Copy(iconPath, copiedPath, overwrite: true);
             return copiedPath;
         }
@@ -214,11 +214,5 @@ public sealed class CatalogService
         }
 
         return unit == 0 ? $"{bytes} B" : $"{value:0.0} {units[unit]}";
-    }
-
-    private static string SafeFileName(string value)
-    {
-        var invalid = Path.GetInvalidFileNameChars();
-        return string.Concat(value.Select(character => invalid.Contains(character) ? '_' : character));
     }
 }

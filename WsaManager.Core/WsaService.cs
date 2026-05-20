@@ -147,6 +147,7 @@ public sealed class WsaService
         {
             try
             {
+                await adbService.EnsureServerAsync(2_500, cancellationToken);
                 var connection = await ConnectToBestEndpointAsync(settings.ManualEndpoint, 2_500, 2_500, cancellationToken);
                 checkedEndpoints.AddRange(connection.CheckedEndpoints);
 
@@ -340,13 +341,13 @@ if ($proc) {
 
     private static async Task<T> WithTimeoutAsync<T>(Task<T> task, int timeoutMs, string label)
     {
-        var timeoutTask = Task.Delay(timeoutMs);
-        var completed = await Task.WhenAny(task, timeoutTask);
-        if (completed == timeoutTask)
+        try
+        {
+            return await task.WaitAsync(TimeSpan.FromMilliseconds(timeoutMs));
+        }
+        catch (TimeoutException)
         {
             throw new TimeoutException($"{label} timed out after {Math.Round(timeoutMs / 1000.0)}s.");
         }
-
-        return await task;
     }
 }

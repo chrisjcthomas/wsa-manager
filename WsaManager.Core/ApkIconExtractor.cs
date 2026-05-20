@@ -31,7 +31,7 @@ public sealed class ApkIconExtractor
 
             Directory.CreateDirectory(outputDirectory);
             var extension = Path.GetExtension(iconEntry.FullName).ToLowerInvariant();
-            var outputPath = Path.Combine(outputDirectory, $"{SanitizeFileName(outputName)}{extension}");
+            var outputPath = Path.Combine(outputDirectory, $"{FileNames.SafeFileName(outputName)}{extension}");
             using var input = iconEntry.Open();
             using var output = File.Create(outputPath);
             input.CopyTo(output);
@@ -269,18 +269,6 @@ public sealed class ApkIconExtractor
         if (lower.Contains("nodpi")) score += 40;
         if (lower.Contains("mipmap")) score += 10;
         return score;
-    }
-
-    private static string SanitizeFileName(string value)
-    {
-        var invalid = Path.GetInvalidFileNameChars();
-        var builder = new StringBuilder(value.Length);
-        foreach (var character in value)
-        {
-            builder.Append(invalid.Contains(character) ? '_' : character);
-        }
-
-        return builder.ToString();
     }
 
     private static string ReadUtf8String(byte[] data, int offset)

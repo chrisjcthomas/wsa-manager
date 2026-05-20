@@ -5,14 +5,55 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   build-release:
     runs-on: windows-latest
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref_name }}
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
       - run: dotnet test WsaManager.Native.sln -p:Platform=x64
       - run: dotnet build WsaManager.Native.sln -p:Platform=x64 -c Release
+      - name: Publish WinUI zip
+        shell: pwsh
+        run: |
+          $version = $env:RELEASE_TAG.TrimStart("v")
+          $publishDir = Join-Path $PWD "artifacts/WSA.Manager.WinUI.$version.win-x64"
+          $zipPath = Join-Path $PWD "artifacts/WSA.Manager.WinUI.$version.win-x64.zip"
+          New-Item -ItemType Directory -Path $publishDir -Force | Out-Null
+          dotnet publish WsaManager.WinUI\WsaManager.WinUI.csproj -c Release -p:Platform=x64 -r win-x64 --self-contained true -o $publishDir
+          Compress-Archive -Path "$publishDir/*" -DestinationPath $zipPath -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wsa-manager-winui-${{ env.RELEASE_TAG }}
+          path: artifacts/WSA.Manager.WinUI.*.win-x64.zip
+      - name: Publish GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $asset = Get-ChildItem artifacts -Filter "WSA.Manager.WinUI.*.win-x64.zip" | Select-Object -First 1
+          if (-not $asset) {
+            throw "Release zip was not produced."
+          }
+
+          gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:RELEASE_TAG $asset.FullName --clobber --repo $env:GITHUB_REPOSITORY
+          } else {
+            gh release create $env:RELEASE_TAG $asset.FullName --title "WSA Manager $env:RELEASE_TAG" --notes "Download the WinUI zip, unzip it, and run WsaManager.WinUI.exe." --repo $env:GITHUB_REPOSITORY
+          }

@@ -60,17 +60,17 @@ public sealed class SettingsStore
                 return new SettingsState();
             }
 
-        var loaded = JsonSerializer.Deserialize<SettingsState>(File.ReadAllText(filePath), JsonOptions) ?? new SettingsState();
-        loaded.Version = 1;
-        loaded.RecentInstalls ??= [];
-        loaded.RecentInstalls.ForEach(entry =>
-        {
-            if (entry.SizeBytes < 0)
+            var loaded = JsonSerializer.Deserialize<SettingsState>(File.ReadAllText(filePath), JsonOptions) ?? new SettingsState();
+            loaded.Version = 1;
+            loaded.RecentInstalls ??= [];
+            loaded.RecentInstalls.ForEach(entry =>
             {
-                entry.SizeBytes = 0;
-            }
-        });
-        return loaded;
+                if (entry.SizeBytes < 0)
+                {
+                    entry.SizeBytes = 0;
+                }
+            });
+            return loaded;
         }
         catch
         {
@@ -86,6 +86,21 @@ public sealed class SettingsStore
 
     private static SettingsState Clone(SettingsState settings)
     {
-        return JsonSerializer.Deserialize<SettingsState>(JsonSerializer.Serialize(settings, JsonOptions), JsonOptions) ?? new SettingsState();
+        return new SettingsState
+        {
+            Version = settings.Version,
+            WizardCompleted = settings.WizardCompleted,
+            AdbPath = settings.AdbPath,
+            ManualEndpoint = settings.ManualEndpoint,
+            RecentInstalls = settings.RecentInstalls.Select(entry => new InstallHistoryEntry
+            {
+                PackageName = entry.PackageName,
+                Label = entry.Label,
+                FileName = entry.FileName,
+                SizeBytes = entry.SizeBytes,
+                IconPath = entry.IconPath,
+                InstalledAt = entry.InstalledAt
+            }).ToList()
+        };
     }
 }

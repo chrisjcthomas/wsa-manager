@@ -67,6 +67,11 @@ public sealed class ProcessCommandRunner : ICommandRunner
             TryKill(process);
             throw new TimeoutException($"Command timed out: {command} {string.Join(" ", args)}");
         }
+        catch (OperationCanceledException)
+        {
+            TryKill(process);
+            throw;
+        }
 
         return new CommandResult
         {
@@ -87,7 +92,7 @@ public sealed class ProcessCommandRunner : ICommandRunner
         }
         catch
         {
-            // Best-effort cleanup after a timeout.
+            // Best-effort cleanup after a timeout or cancellation.
         }
     }
 }

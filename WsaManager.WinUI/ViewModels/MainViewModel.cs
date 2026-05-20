@@ -260,10 +260,7 @@ public sealed class MainViewModel : INotifyPropertyChanged
 
     private void EnqueueOnUi(Action action)
     {
-        if (!dispatcherQueue.TryEnqueue(() => action()))
-        {
-            action();
-        }
+        dispatcherQueue.TryEnqueue(() => action());
     }
 
     private static void Replace<T>(ObservableCollection<T> collection, IEnumerable<T> items)

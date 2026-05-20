@@ -32,3 +32,12 @@ public static class DisplayNames
         return char.ToUpperInvariant(value[0]) + value[1..];
     }
 }
+
+public static class FileNames
+{
+    public static string SafeFileName(string value)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        return string.Concat(value.Select(character => invalid.Contains(character) ? '_' : character));
+    }
+}

@@ -297,7 +297,7 @@ public sealed class WsaService
         return retry;
     }
 
-    private async Task<IReadOnlyList<AdbDevice>> ListDevicesOrEmptyAsync(int devicesTimeoutMs, CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<ParsedDevice>> ListDevicesOrEmptyAsync(int devicesTimeoutMs, CancellationToken cancellationToken)
     {
         try
         {
